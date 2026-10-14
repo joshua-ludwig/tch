@@ -44,7 +44,7 @@
     var a = e.target.closest && e.target.closest('a[href]');
     if (!a) return;
     var href = a.getAttribute('href');
-    var m = href && href.match(/^(?:index\.html)?#(.+)$/);
+    var m = href && href.match(/^(?:\/|index\.html)?#(.+)$/);
     if (!m) return;
     var el = doc.getElementById(m[1]);
     if (!el) return;
@@ -259,17 +259,20 @@
     setAngle(0);
     /* 3D-Schläger nachladen, damit die Startseite schnell erscheint */
     function load3d() {
+      if (window.matchMedia('(max-width: 980px)').matches) return;   /* Handy und Tablet zeigen ein Bild statt 3D */
       var pin = heroEl.querySelector('.hero-pin');
       var stack = heroEl.querySelector('.rstack');
       import('./racket3d.min.js').then(function (m) {
-        var ctl = m.init(pin, stage, stack);
-        if (!ctl) return;
-        r3d = ctl;
-        stage.classList.add('r3d');
-        setAngle(0);
+        return Promise.resolve(m.init(pin, stage, stack)).then(function (ctl) {
+          if (!ctl) return;
+          r3d = ctl;
+          stage.classList.add('r3d');
+          setAngle(0);
+        });
       }).catch(function () { /* ohne WebGL bleibt der Schläger weg, Bälle und Text bleiben */ });
     }
-    window.addEventListener('load', function () { (window.requestIdleCallback || function (fn) { setTimeout(fn, 400); })(load3d); });
+    /* Erst nach dem Einblenden des Heros (ca. 1,5 s) und wenn der Browser Zeit hat */
+    window.addEventListener('load', function () { setTimeout(function () { (window.requestIdleCallback || function (fn) { setTimeout(fn, 200); })(load3d, { timeout: 3000 }); }, 1500); });
 
     /* Scroll: linker Text bleibt, der Schläger dreht sich, kommt näher und fliegt weg */
     if (hasGsap && window.ScrollTrigger && !reduce) {
@@ -385,6 +388,7 @@
     var stage = doc.querySelector('.cta-stage');
     if (!stage) return;
     function go() {
+      if (window.matchMedia('(max-width: 980px)').matches) return;
       import('./racket3d.min.js').then(function (m) { m.initCta(stage); }).catch(function () {});
     }
     if ('IntersectionObserver' in window) {

@@ -1,0 +1,21 @@
+{
+  "name": "TC Grün-Weiss Heiligenwald",
+  "short_name": "TC Heiligenwald",
+  "lang": "de",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#f6f5ef",
+  "theme_color": "#0f4d2a",
+  "icons": [
+    {
+      "src": "/assets/logo/favicon-96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/logo/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

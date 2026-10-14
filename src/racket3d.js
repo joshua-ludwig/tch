@@ -6,6 +6,8 @@ import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 
 import { LENGTH, buildRacket } from './racket-model.js';
+// Kurze Pause, damit der Browser zwischen den schweren Schritten Eingaben und Zeichnen bedienen kann
+const tick = () => new Promise((r) => setTimeout(r, 0));
 const smooth = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
 
 /* Gemeinsamer Aufbau: Renderer, Licht und Kamera */
@@ -15,6 +17,12 @@ function setup(canvas) {
   try {
     renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
   } catch (e) { return null; }
+  // Ohne Grafikkarte (reiner Software-Renderer) wäre der Schläger zu langsam: dann bleibt er weg
+  try {
+    const gl = renderer.getContext(), ext = gl.getExtension('WEBGL_debug_renderer_info');
+    const name = ext ? String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)) : '';
+    if (/swiftshader|llvmpipe|software|basic render/i.test(name)) { renderer.dispose(); return null; }
+  } catch (e) { /* weiter */ }
   renderer.setClearColor(0x000000, 0);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.NeutralToneMapping;
@@ -22,7 +30,7 @@ function setup(canvas) {
 
   const scene = new THREE.Scene();
   const pmrem = new THREE.PMREMGenerator(renderer);
-  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04, 0.1, 100, { size: 128 }).texture;
   scene.environmentIntensity = 0.95;
 
   const key = new THREE.DirectionalLight(0xffffff, 2.4); key.position.set(-35, 45, 55);
@@ -39,7 +47,7 @@ function setup(canvas) {
  * damit der Schläger beim Heranfliegen nicht abgeschnitten wird.
  * Rückgabe: Steuerung (setAngle, setFlight) oder null, wenn WebGL fehlt.
  */
-export function init(heroPin, stage, measureEl) {
+export async function init(heroPin, stage, measureEl) {
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const canvas = document.createElement('canvas');
   canvas.className = 'r3d-canvas';
@@ -48,6 +56,7 @@ export function init(heroPin, stage, measureEl) {
   if (!base) return null;
   const { renderer, scene, camera } = base;
   stage.appendChild(canvas);
+  await tick();
 
   // Hierarchie: Anker (Bildschirmposition) > Blick (Maus) > Neigung (16 Grad) > Drehung (um die Längsachse)
   const anchor = new THREE.Group();
@@ -56,6 +65,8 @@ export function init(heroPin, stage, measureEl) {
   const spin = new THREE.Group();
   tilt.rotation.z = (-16 * Math.PI) / 180;
   scene.add(anchor); anchor.add(look); look.add(tilt); tilt.add(spin); spin.add(buildRacket());
+  let ready = false;   // wird true, sobald die Shader im Hintergrund kompiliert sind
+  await tick();
 
   const small = () => window.matchMedia('(max-width: 980px)').matches;   // Handy: kein Heranfliegen, Zeichenfläche = Bühne
   const st = { w: 1, h: 1, ppu: 1, ax: 0, ay: 0, angle: 0, flight: 0, intro: reduce ? 1 : 0, floatPx: 14, visible: true };
@@ -81,6 +92,7 @@ export function init(heroPin, stage, measureEl) {
   }
 
   function render(now) {
+    if (!ready) return;
     const t = now / 1000;
     const k = 1 + 8 * Math.pow(st.flight, 3);                  // beschleunigtes Heranfliegen
     const camZ = D / k;
@@ -120,6 +132,8 @@ export function init(heroPin, stage, measureEl) {
   }
 
   resize();
+  const go = () => { ready = true; last = performance.now(); resize(); };
+  try { renderer.compileAsync(scene, camera).then(go, go); } catch (e) { go(); }
   if ('ResizeObserver' in window) new ResizeObserver(resize).observe(heroPin);
   window.addEventListener('resize', resize);
   window.addEventListener('load', resize);
@@ -136,7 +150,7 @@ export function init(heroPin, stage, measureEl) {
  * Derselbe Schläger für den Block "Spiel bei uns": schräg gestellt, schwebt leicht und pendelt langsam hin und her.
  * Gerendert wird nur, solange der Block sichtbar ist.
  */
-export function initCta(stage) {
+export async function initCta(stage) {
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const canvas = document.createElement('canvas');
   canvas.className = 'r3d-canvas cta-canvas';
@@ -145,6 +159,7 @@ export function initCta(stage) {
   if (!base) return null;
   const { renderer, scene, camera } = base;
   stage.appendChild(canvas);
+  await tick();
 
   const anchor = new THREE.Group();
   const look = new THREE.Group();
@@ -152,6 +167,8 @@ export function initCta(stage) {
   const spin = new THREE.Group();
   tilt.rotation.z = (28 * Math.PI) / 180;
   scene.add(anchor); anchor.add(look); look.add(tilt); tilt.add(spin); spin.add(buildRacket());
+  let ready = false;   // wird true, sobald die Shader im Hintergrund kompiliert sind
+  await tick();
 
   const st = { ppu: 1, visible: true, intro: reduce ? 1 : 0 };
   const mouse = { x: 0, y: 0 }, cur = { x: 0, y: 0 };
@@ -169,6 +186,7 @@ export function initCta(stage) {
   }
 
   function render(now) {
+    if (!ready) return;
     const t = now / 1000;
     const introE = 1 - Math.pow(1 - st.intro, 3);
     cur.x += (mouse.x - cur.x) * 0.06; cur.y += (mouse.y - cur.y) * 0.06;
@@ -199,6 +217,8 @@ export function initCta(stage) {
     requestAnimationFrame(loop);
   }
   resize();
+  const go = () => { ready = true; last = performance.now(); resize(); };
+  try { renderer.compileAsync(scene, camera).then(go, go); } catch (e) { go(); }
   if ('ResizeObserver' in window) new ResizeObserver(resize).observe(stage);
   return { canvas, resize };
 }

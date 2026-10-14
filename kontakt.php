@@ -32,7 +32,7 @@ function antwort($ok, $text, $status = 200)
            . '<title>Kontakt | TC Grün-Weiss Heiligenwald</title>'
            . '<body style="font-family:system-ui,sans-serif;max-width:560px;margin:15vh auto;padding:0 20px;color:#0f4d2a">'
            . '<h1>' . ($ok ? 'Danke!' : 'Das hat nicht geklappt') . '</h1><p>' . $t . '</p>'
-           . '<p><a href="index.html" style="color:#0f4d2a">Zur Startseite</a></p></body></html>';
+           . '<p><a href="/" style="color:#0f4d2a">Zur Startseite</a></p></body></html>';
     }
     exit;
 }
