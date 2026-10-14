@@ -89,7 +89,7 @@
       btn.disabled = true;
       btn.textContent = 'Wird gesendet …';
       fetch(form.action, { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' } })
-        .then(function (r) { return r.json().catch(function () { return { ok: false, message: 'Unerwartete Antwort des Servers.' }; }); })
+        .then(function (r) { return r.json().catch(function () { return { ok: false, message: 'Das Formular ist gerade nicht erreichbar. Bitte schreib uns direkt an tc-heiligenwald@t-online.de.' }; }); })
         .then(function (d) {
           status.textContent = d.message;
           if (d.ok) { form.reset(); stamp.value = String(Date.now()); } else { status.className = 'cstatus err'; }
