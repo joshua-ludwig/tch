@@ -7,6 +7,10 @@
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var hasGsap = !!window.gsap;
   root.classList.add('js');
+  /* Die Startseite heißt nur "/": ein evtl. angehängtes index.html wird in der Adresszeile ersetzt */
+  if (/\/index\.html$/.test(location.pathname) && history.replaceState) {
+    history.replaceState(null, '', location.pathname.replace(/index\.html$/, '') + location.search + location.hash);
+  }
   /* Handy und Tablet: native Scrollphysik und weniger Effekte, damit nichts ruckelt */
   var lite = window.matchMedia('(pointer: coarse), (max-width: 980px)').matches;
 
