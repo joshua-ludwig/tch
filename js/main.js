@@ -236,33 +236,14 @@
     var scrollP = 0;
     var r3d = null;   /* 3D-Schläger (Three.js), wird nach dem Laden zugeschaltet */
 
-    /* Schläger-Drehung: fünf Aufnahmen (0, 45, 90, 135, 180 Grad) werden je nach Winkel überblendet.
-       Jedes Bild wird dabei waagerecht gestaucht, damit die Breite zum echten Winkel passt. */
-    var frames = [].slice.call(heroEl.querySelectorAll('.rf'));
-    var frameAngles = [0, 45, 90, 135, 180];
-    function smooth(a, b, x) { var t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); }
+    /* Schläger-Drehung: der 3D-Schläger (Three.js) dreht sich um die Längsachse, der Bodenschatten wird dabei schmaler */
     function setAngle(a) {
-      var i = Math.min(3, Math.floor(a / 45));
-      var f = (a - 45 * i) / 45;
-      var t = smooth(0.35, 0.65, f);
-      var w = [0, 0, 0, 0, 0];
-      w[i] = 1 - t; w[i + 1] = t;
       var c = Math.cos(a * Math.PI / 180);
-      frames.forEach(function (el, k) {
-        if (w[k] < 0.004) { el.style.opacity = '0'; return; }
-        var ck = Math.cos(frameAngles[k] * Math.PI / 180);
-        var sx = k === 2 ? 1 : Math.max(0.35, Math.min(1.6, c / ck));
-        el.style.opacity = w[k].toFixed(3);
-        el.style.transform = 'scaleX(' + sx.toFixed(3) + ')';
-      });
-      /* Bodenschatten wird beim Drehen schmaler, bei der Seitenansicht fast ein Strich */
       shadow.style.setProperty('--sw', (0.3 + 0.7 * Math.abs(c)).toFixed(3));
       if (r3d) r3d.setAngle(a);
     }
-    if (frames.length === 5) setAngle(0);
-    /* Die vier Dreh-Ansichten laden erst nach dem Seitenstart (oder beim ersten Scrollen),
-       damit die Startseite schneller erscheint. */
-    /* 3D-Schläger nachladen: bis dahin zeigt die Seite das Foto, danach blendet sie weich um */
+    setAngle(0);
+    /* 3D-Schläger nachladen, damit die Startseite schnell erscheint */
     function load3d() {
       var pin = heroEl.querySelector('.hero-pin');
       var stack = heroEl.querySelector('.rstack');
@@ -271,20 +252,10 @@
         if (!ctl) return;
         r3d = ctl;
         stage.classList.add('r3d');
-        requestAnimationFrame(function () { ctl.canvas.classList.add('on'); });
-        setTimeout(function () { tilt.style.visibility = 'hidden'; }, 900);
         setAngle(0);
-      }).catch(function () { /* Foto bleibt als Rückfall stehen */ });
+      }).catch(function () { /* ohne WebGL bleibt der Schläger weg, Bälle und Text bleiben */ });
     }
     window.addEventListener('load', function () { (window.requestIdleCallback || function (fn) { setTimeout(fn, 400); })(load3d); });
-    var framesLoaded = false;
-    function loadFrames() {
-      if (framesLoaded) return;
-      framesLoaded = true;
-      frames.forEach(function (f) { if (f.getAttribute('data-src') && !f.getAttribute('src')) f.setAttribute('src', f.getAttribute('data-src')); });
-    }
-    window.addEventListener('load', function () { (window.requestIdleCallback || function (fn) { setTimeout(fn, 300); })(loadFrames); });
-    window.addEventListener('scroll', loadFrames, { passive: true, once: true });
 
     /* Scroll: linker Text bleibt, der Schläger dreht sich, kommt näher und fliegt weg */
     if (hasGsap && window.ScrollTrigger && !reduce) {
@@ -393,6 +364,21 @@
       });
       requestAnimationFrame(loop);
     })();
+  })();
+
+  /* ---------- "Spiel bei uns": derselbe 3D-Schläger wie im Hero, geladen kurz vor dem Sichtbarwerden ---------- */
+  (function ctaRacket() {
+    var stage = doc.querySelector('.cta-stage');
+    if (!stage) return;
+    function go() {
+      import('./racket3d.min.js').then(function (m) { m.initCta(stage); }).catch(function () {});
+    }
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (en) {
+        if (en[0].isIntersecting) { io.disconnect(); go(); }
+      }, { rootMargin: '600px 0px' });
+      io.observe(stage);
+    } else { go(); }
   })();
 
   /* ---------- "Spiel bei uns": Bälle weichen aus und werden sandig ---------- */

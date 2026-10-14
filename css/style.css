@@ -103,13 +103,10 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--green-bright);outli
 .balls{position:absolute;inset:0;transform-origin:50% 50%}
 .rwrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;perspective:1400px;z-index:3;pointer-events:none}
 .rstack{position:relative;height:var(--rh);width:calc(var(--rh)*460/935);filter:drop-shadow(0 30px 34px rgba(15,77,42,.28));animation:racketIn 1.3s var(--ease) .15s both,floaty 7s ease-in-out 1.45s infinite}
-.rf{position:absolute;left:0;top:0;width:100%;height:100%;opacity:0;will-change:transform,opacity}
-.rf:first-child{opacity:1}
 @keyframes racketIn{from{opacity:0;transform:translateY(70px) rotate(6deg) scale(.92)}to{opacity:1;transform:translateY(0) rotate(16deg) scale(1)}}
 @keyframes floaty{0%,100%{transform:translateY(0) rotate(16deg)}50%{transform:translateY(-18px) rotate(14deg)}}
 .tilt{transform-style:preserve-3d;will-change:transform}
 .r3d-canvas{position:absolute;z-index:3;pointer-events:none;opacity:0}
-.stage.r3d .tilt{opacity:0;transition:opacity .7s ease .7s}
 .shadow{position:absolute;left:50%;bottom:3vh;width:calc(60%*var(--sw,1));max-width:calc(340px*var(--sw,1));height:5vh;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(15,50,30,.42),transparent);filter:blur(8px);animation:shadowPulse 7s ease-in-out 1.45s infinite}
 @keyframes shadowPulse{0%,100%{transform:translateX(-50%) scale(1);opacity:.9}50%{transform:translateX(-50%) scale(.86);opacity:.65}}
 .b{position:absolute;width:calc(var(--rh)*.098*var(--s));will-change:transform}
@@ -156,8 +153,7 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--green-bright);outli
 .gastro-photo{aspect-ratio:4/3.2}
 .cta-grid{max-width:1220px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(24px,4vw,56px);align-items:center}
 .cta-stage{position:relative;--rh:clamp(300px,31vw,420px);height:clamp(320px,36vw,480px)}
-.cta-racket{position:absolute;left:50%;top:50%;height:var(--rh);width:auto;transform:translate(-50%,-52%) rotate(-28deg);filter:drop-shadow(0 26px 24px rgba(15,77,42,.3));animation:ctaFloat 7s ease-in-out infinite}
-@keyframes ctaFloat{0%,100%{transform:translate(-50%,-52%) rotate(-28deg)}50%{transform:translate(-50%,-55%) rotate(-26deg)}}
+.cta-canvas{inset:auto;left:0;top:0;z-index:2}
 .cta-shadow{position:absolute;left:50%;bottom:4%;width:52%;height:7%;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(15,50,30,.34),transparent);filter:blur(8px)}
 .cdust{position:absolute;left:0;top:0;height:auto;opacity:0;pointer-events:none;z-index:4;transform:translate(-50%,-50%)}
 .cta-stage .b{z-index:3}
