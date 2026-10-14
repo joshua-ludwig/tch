@@ -1,0 +1,3 @@
+# Nur für die Testadresse tch.joshua-wurf.de (wird per .htaccess als robots.txt ausgeliefert)
+User-agent: *
+Disallow: /

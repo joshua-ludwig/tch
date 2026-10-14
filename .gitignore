@@ -1,0 +1,16 @@
+# Originale und Zwischenstände gehören nicht ins Repo und nicht auf den Server
+assets/orig/
+assets/hero/*.png
+
+# Konfigurationsordner von Entwicklungswerkzeugen
+.impeccable/
+**/.impeccable/
+.claude/
+
+# Hilfsdateien für die lokale Arbeit
+serve.js
+PLAN.md
+TEXTE.md
+node_modules/
+.DS_Store
+Thumbs.db
