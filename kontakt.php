@@ -1,7 +1,7 @@
 <?php
 /**
  * Kontaktformular des TC Grün-Weiss Heiligenwald.
- * Verschickt Name, E-Mail und Nachricht per E-Mail an den Verein.
+ * Verschickt Name, E-Mail, Telefon (freiwillig) und Nachricht per E-Mail an den Verein.
  * Es wird nichts in einer Datenbank gespeichert. Für den Spamschutz liegt nur kurz ein
  * Hashwert der IP-Adresse mit Zeitstempeln in einer Temp-Datei (Löschung nach 1 Stunde).
  * Läuft ab PHP 7.4.
@@ -58,6 +58,7 @@ if ($t > 0) {
 // ---- Eingaben prüfen ----
 $name    = isset($_POST['name']) ? trim((string) $_POST['name']) : '';
 $email   = isset($_POST['email']) ? trim((string) $_POST['email']) : '';
+$phone   = isset($_POST['phone']) ? trim((string) $_POST['phone']) : '';
 $message = isset($_POST['message']) ? trim((string) $_POST['message']) : '';
 
 if ($name === '' || $email === '' || $message === '') {
@@ -69,7 +70,13 @@ if (!isset($_POST['privacy'])) {
 if (mb_strlen($name, 'UTF-8') > 100 || mb_strlen($email, 'UTF-8') > 150 || mb_strlen($message, 'UTF-8') > 3000) {
     antwort(false, 'Eine Eingabe ist zu lang.', 422);
 }
-if (preg_match('/[\r\n]/', $name) || preg_match('/[\r\n]/', $email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+if ($phone !== '' && !preg_match('/^[0-9+()\/ -]{6,25}$/', $phone)) {
+    antwort(false, 'Bitte gib die Telefonnummer nur mit Ziffern an, zum Beispiel 06821 68787.', 422);
+}
+if (preg_match('/[<>0-9]/', $name) || mb_strlen($name, 'UTF-8') < 2) {
+    antwort(false, 'Bitte gib deinen Namen ohne Ziffern und Sonderzeichen an.', 422);
+}
+if (preg_match('/[\r\n]/', $name) || preg_match('/[\r\n]/', $email) || !filter_var($email, FILTER_VALIDATE_EMAIL) || strpos(substr($email, strrpos($email, '@')), '.') === false) {
     antwort(false, 'Bitte gib eine gültige E-Mail-Adresse und einen Namen ohne Zeilenumbruch an.', 422);
 }
 // Viele Links in der Nachricht deuten auf Spam hin
@@ -107,7 +114,9 @@ $von  = $ABSENDER !== '' ? $ABSENDER : 'kontakt@' . $host;
 $betreff = 'Kontaktanfrage über die Website von ' . mb_substr($name, 0, 60, 'UTF-8');
 $betreffKodiert = mb_encode_mimeheader($betreff, 'UTF-8', 'B', "\r\n");
 $text = "Name: " . $name . "\r\n"
-      . "E-Mail: " . $email . "\r\n\r\n"
+      . "E-Mail: " . $email . "\r\n"
+      . ($phone !== '' ? "Telefon: " . $phone . "\r\n" : '')
+      . "\r\n"
       . "Nachricht:\r\n" . $message . "\r\n\r\n"
       . "--\r\nGesendet über das Kontaktformular auf " . $host . "\r\n";
 
