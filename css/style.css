@@ -220,7 +220,7 @@ a.sp:hover{filter:none;opacity:1;transform:translateY(-4px)}
 .footer .fbrand{display:flex;align-items:center;gap:12px;font-weight:700;font-size:18px}
 .footer .fbrand img{width:44px;height:auto}
 .footer .blurb{margin-top:14px;color:rgba(255,255,255,.85)}
-.footer .bottom{max-width:1220px;margin:38px auto 0;padding-top:22px;border-top:1px solid rgba(255,255,255,.2);font-size:14px;color:rgba(255,255,255,.82);display:flex;justify-content:space-between;gap:12px 28px;flex-wrap:wrap}
+.footer .bottom{max-width:1220px;margin:38px auto 0;padding-top:22px;border-top:1px solid rgba(255,255,255,.2);font-size:14px;color:rgba(255,255,255,.82);display:flex;justify-content:space-between;align-items:center;gap:12px 28px;flex-wrap:wrap}
 .footer .bottom a{font-weight:700;display:inline-block;padding:12px 0}
 
 /* ---------- Unterseiten ---------- */
@@ -291,6 +291,8 @@ a.sp:hover{filter:none;opacity:1;transform:translateY(-4px)}
 .anliegen-card .cstatus{color:var(--green)}
 .anliegen-card .cstatus.err{color:#b23a1e}
 .fbtn{margin-top:18px}
+.footer a.fbtn{color:var(--green);font-weight:700;text-decoration:none}
+.footer a.fbtn:hover{color:var(--green-dark);text-decoration:none}
 .cform input[type=text],.cform input[type=email],.cform input[type=tel],.cform textarea{font:inherit;font-weight:500;font-size:16px;color:#fff;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.4);border-radius:14px;padding:14px 16px;min-height:50px;width:100%}
 .cform textarea{resize:vertical;min-height:130px}
 .cform input:focus,.cform textarea:focus{outline:3px solid #9bd68a;outline-offset:2px;background:rgba(255,255,255,.16)}
