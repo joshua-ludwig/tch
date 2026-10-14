@@ -33,3 +33,19 @@ Die Alben stehen in `js/gallery-data.js`. Foto als WebP (1600 px breit) in `asse
 ## Technik
 - Schriften und Skripte liegen lokal (GSAP, ScrollTrigger, Lenis). Keine Cookies, keine externen Dienste.
 - Externe Links öffnen erst nach Klick: Speisekarte (`speisekarte.jetzt`), Google Maps, Aufnahmeantrag (PDF auf der alten Seite), Sponsoren.
+
+## Kontaktformular (PHP)
+
+Das Formular im Footer sendet per POST an `kontakt.php` (Hostinger, `mail()`).
+Empfänger und Absender stehen oben in der Datei (`$EMPFAENGER`, `$ABSENDER`).
+Lege am besten ein Postfach `kontakt@tc-heiligenwald.de` an und trage es als Absender ein,
+sonst landen Mails leichter im Spam. Nach dem Upload einmal eine Testnachricht senden.
+
+## 3D-Schläger neu bauen
+
+Quelle: `src/racket3d.js` (Three.js, komplett im Code gebaut). Das Bundle `js/racket3d.min.js` entsteht mit:
+
+```bash
+npm i three esbuild
+npx esbuild src/racket3d.js --bundle --minify --format=esm --outfile=js/racket3d.min.js
+```

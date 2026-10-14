@@ -221,8 +221,8 @@
         <div class="im"><img src="assets/img/m/photo-2026-06-07-20-41-28.webp" srcset="assets/img/m/photo-2026-06-07-20-41-28.webp 900w, assets/img/photo-2026-06-07-20-41-28.webp 1600w" sizes="(max-width: 980px) 94vw, 700px" alt="Die U15-Juniorinnen heben als Landesliga-Meister ihre Schläger am Netz in die Luft" width="1600" height="1200" loading="lazy"></div>
         <div class="tx">
           <p class="date">11. Juni 2026</p>
-          <h3 class="display">Landesliga-Meister: unsere U15-Juniorinnen</h3>
-          <p>Die U15-Juniorinnen sind Meister der Landesliga. Gespielt haben sie in der Spielgemeinschaft mit Stennweiler und Landsweiler.</p>
+          <h3 class="display">Meister in der Landesliga</h3>
+          <p>Unsere Juniorinnen U15 (SG mit Stennweiler und Landsweiler) sind Meister in der Landesliga! Tolle Leistung der Mädels - Herzlichen Glückwunsch !!!</p>
           <span class="more">Weiterlesen &rarr;</span>
         </div>
       </a>
@@ -230,8 +230,8 @@
         <div class="im"><img src="assets/img/m/u18_damen.webp" srcset="assets/img/m/u18_damen.webp 900w, assets/img/u18_damen.webp 1600w" sizes="(max-width: 980px) 94vw, 700px" alt="Die U18-Juniorinnen in schwarzen Trikots auf dem Sandplatz" width="637" height="477" loading="lazy"></div>
         <div class="tx">
           <p class="date">1. September 2026</p>
-          <h3 class="display">12:2 in Oberkirchen: U18 bleibt auf Meisterkurs</h3>
-          <p>Die U18-Juniorinnen haben beim TC Rot-Weiß Oberkirchen mit 12:2 gewonnen und sind weiter auf Titelkurs.</p>
+          <h3 class="display">U18-Juniorinnen weiter auf Meisterschaftskurs – überzeugender 12:2-Erfolg in Oberkirchen</h3>
+          <p>Einen weiteren starken Auftritt konnten die U18-Juniorinnen der Spielgemeinschaft TuS Neunkirchen/Heiligenwald/Stennweiler/Landsweiler am vergangenen Sonntag verbuchen.</p>
           <span class="more">Weiterlesen &rarr;</span>
         </div>
       </a>
@@ -373,6 +373,22 @@
 
 <!-- ================= Footer ================= -->
 <footer class="footer">
+  <div class="contact" id="anfrage">
+    <div class="contact-intro">
+      <p class="fh">Anliegen</p>
+      <h2 class="display">Schreib uns</h2>
+      <p>Du hast eine Frage zum Verein, zum Training oder zur Mitgliedschaft? Schick uns eine Nachricht, wir melden uns bei dir.</p>
+    </div>
+    <form class="cform" action="kontakt.php" method="post" novalidate>
+      <label>Name<input name="name" type="text" autocomplete="name" required maxlength="100"></label>
+      <label>E-Mail<input name="email" type="email" autocomplete="email" required maxlength="150"></label>
+      <label class="full">Nachricht<textarea name="message" rows="5" required maxlength="3000"></textarea></label>
+      <div class="hp" aria-hidden="true"><label>Bitte leer lassen<input name="website" type="text" tabindex="-1" autocomplete="off"></label></div>
+      <input type="hidden" name="t" value="">
+      <label class="check full"><input type="checkbox" name="privacy" required><span>Ich habe die <a href="datenschutz.html">Datenschutzerklärung</a> gelesen und bin einverstanden, dass meine Angaben zur Beantwortung der Anfrage verarbeitet werden.</span></label>
+      <div class="full cform-actions"><button class="btn btn-light" type="submit">Nachricht senden</button><p class="cstatus" role="status" aria-live="polite"></p></div>
+    </form>
+  </div>
   <div class="cols">
     <div>
       <div class="fbrand"><img src="assets/logo/logo.webp" alt="" width="44" height="49"><span>TC Grün-Weiss Heiligenwald e.V.</span></div>

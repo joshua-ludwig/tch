@@ -70,8 +70,9 @@
       <h2>4. Keine Cookies, keine Analyse, keine Werbung</h2>
       <p>Diese Website setzt keine Cookies und verwendet keine Dienste zur Reichweitenmessung, Werbung oder Profilbildung. Schriften, Skripte und Bilder werden von unserem eigenen Server geladen und nicht von Drittanbietern. Deshalb gibt es auch kein Cookie-Banner.</p>
 
-      <h2>5. Kontaktaufnahme per E-Mail oder Telefon</h2>
+      <h2>5. Kontaktaufnahme per Formular, E-Mail oder Telefon</h2>
       <p>Wenn Sie uns per E-Mail oder Telefon kontaktieren, verarbeiten wir Ihre Angaben, zum Beispiel Name, Kontaktdaten und den Inhalt Ihrer Anfrage, um diese zu beantworten. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO, wenn es um eine Mitgliedschaft oder einen Vertrag geht, sonst Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Beantwortung von Anfragen). Wir löschen die Daten, sobald Ihre Anfrage erledigt ist und keine gesetzlichen Aufbewahrungspflichten entgegenstehen. An Dritte geben wir sie nicht weiter.</p>
+      <p><strong>Kontaktformular:</strong> Wenn Sie das Formular im Fußbereich der Seite nutzen, übertragen Sie Name, E-Mail-Adresse und Nachricht an unseren Server. Ein Skript verschickt diese Angaben als E-Mail an den Verein. Die Angaben werden dabei nicht in einer Datenbank oder Datei gespeichert. Zur Abwehr von Missbrauch (Spam) hält der Server kurzzeitig einen nicht umkehrbaren Hashwert Ihrer IP-Adresse mit Zeitstempeln vor, um die Zahl der Anfragen zu begrenzen. Diese Daten werden nach spätestens einer Stunde gelöscht. Die E-Mail wird über den Mailserver des Hosting-Anbieters versandt und landet im Postfach des Vereins. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO, wenn es um eine Mitgliedschaft oder einen Vertrag geht, sonst Art. 6 Abs. 1 lit. f DSGVO. Die Angabe von Name und E-Mail-Adresse ist nötig, damit wir antworten können.</p>
 
       <h2>6. Aufnahmeantrag</h2>
       <p>Den Aufnahmeantrag können Sie auf dieser Website als PDF herunterladen. Dabei werden nur die Daten aus Ziffer 2 verarbeitet. Die Angaben, die Sie später im Antrag machen, verarbeitet der Verein zur Mitgliederverwaltung (Art. 6 Abs. 1 lit. b DSGVO). Informationen dazu erhalten Sie auf Nachfrage beim Vorstand.</p>
@@ -104,6 +105,22 @@
 
 </main>
 <footer class="footer">
+  <div class="contact" id="anfrage">
+    <div class="contact-intro">
+      <p class="fh">Anliegen</p>
+      <h2 class="display">Schreib uns</h2>
+      <p>Du hast eine Frage zum Verein, zum Training oder zur Mitgliedschaft? Schick uns eine Nachricht, wir melden uns bei dir.</p>
+    </div>
+    <form class="cform" action="kontakt.php" method="post" novalidate>
+      <label>Name<input name="name" type="text" autocomplete="name" required maxlength="100"></label>
+      <label>E-Mail<input name="email" type="email" autocomplete="email" required maxlength="150"></label>
+      <label class="full">Nachricht<textarea name="message" rows="5" required maxlength="3000"></textarea></label>
+      <div class="hp" aria-hidden="true"><label>Bitte leer lassen<input name="website" type="text" tabindex="-1" autocomplete="off"></label></div>
+      <input type="hidden" name="t" value="">
+      <label class="check full"><input type="checkbox" name="privacy" required><span>Ich habe die <a href="datenschutz.html">Datenschutzerklärung</a> gelesen und bin einverstanden, dass meine Angaben zur Beantwortung der Anfrage verarbeitet werden.</span></label>
+      <div class="full cform-actions"><button class="btn btn-light" type="submit">Nachricht senden</button><p class="cstatus" role="status" aria-live="polite"></p></div>
+    </form>
+  </div>
   <div class="cols">
     <div>
       <div class="fbrand"><img src="assets/logo/logo.webp" alt="" width="44" height="49"><span>TC Grün-Weiss Heiligenwald e.V.</span></div>

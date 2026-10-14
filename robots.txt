@@ -1,6 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /404.html
+Disallow: /kontakt.php
 
 # KI-Crawler ausdrücklich zugelassen
 User-agent: GPTBot

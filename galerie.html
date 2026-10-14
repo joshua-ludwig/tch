@@ -62,6 +62,22 @@
 
 </main>
 <footer class="footer">
+  <div class="contact" id="anfrage">
+    <div class="contact-intro">
+      <p class="fh">Anliegen</p>
+      <h2 class="display">Schreib uns</h2>
+      <p>Du hast eine Frage zum Verein, zum Training oder zur Mitgliedschaft? Schick uns eine Nachricht, wir melden uns bei dir.</p>
+    </div>
+    <form class="cform" action="kontakt.php" method="post" novalidate>
+      <label>Name<input name="name" type="text" autocomplete="name" required maxlength="100"></label>
+      <label>E-Mail<input name="email" type="email" autocomplete="email" required maxlength="150"></label>
+      <label class="full">Nachricht<textarea name="message" rows="5" required maxlength="3000"></textarea></label>
+      <div class="hp" aria-hidden="true"><label>Bitte leer lassen<input name="website" type="text" tabindex="-1" autocomplete="off"></label></div>
+      <input type="hidden" name="t" value="">
+      <label class="check full"><input type="checkbox" name="privacy" required><span>Ich habe die <a href="datenschutz.html">Datenschutzerklärung</a> gelesen und bin einverstanden, dass meine Angaben zur Beantwortung der Anfrage verarbeitet werden.</span></label>
+      <div class="full cform-actions"><button class="btn btn-light" type="submit">Nachricht senden</button><p class="cstatus" role="status" aria-live="polite"></p></div>
+    </form>
+  </div>
   <div class="cols">
     <div>
       <div class="fbrand"><img src="assets/logo/logo.webp" alt="" width="44" height="49"><span>TC Grün-Weiss Heiligenwald e.V.</span></div>

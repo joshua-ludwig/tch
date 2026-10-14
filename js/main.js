@@ -63,6 +63,36 @@
     });
   }
 
+  /* ---------- Kontaktformular ---------- */
+  (function contactForm() {
+    var form = doc.querySelector('.cform');
+    if (!form || !window.fetch) return;
+    var stamp = form.querySelector('[name=t]');
+    var status = form.querySelector('.cstatus');
+    var btn = form.querySelector('button[type=submit]');
+    stamp.value = String(Date.now());
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      status.className = 'cstatus';
+      status.textContent = '';
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+      var label = btn.textContent;
+      btn.disabled = true;
+      btn.textContent = 'Wird gesendet …';
+      fetch(form.action, { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' } })
+        .then(function (r) { return r.json().catch(function () { return { ok: false, message: 'Unerwartete Antwort des Servers.' }; }); })
+        .then(function (d) {
+          status.textContent = d.message;
+          if (d.ok) { form.reset(); stamp.value = String(Date.now()); } else { status.className = 'cstatus err'; }
+        })
+        .catch(function () {
+          status.className = 'cstatus err';
+          status.textContent = 'Keine Verbindung. Bitte versuche es später noch einmal oder schreib an tc-heiligenwald@t-online.de.';
+        })
+        .then(function () { btn.disabled = false; btn.textContent = label; });
+    });
+  })();
+
   /* ---------- Einblenden beim Scrollen + Zahlen hochzählen ---------- */
   function countUp(el) {
     var to = parseFloat(el.getAttribute('data-to'));
@@ -204,6 +234,7 @@
     var ballsFg = heroEl.querySelector('.balls-fg');
     var shadow = heroEl.querySelector('.shadow');
     var scrollP = 0;
+    var r3d = null;   /* 3D-Schläger (Three.js), wird nach dem Laden zugeschaltet */
 
     /* Schläger-Drehung: fünf Aufnahmen (0, 45, 90, 135, 180 Grad) werden je nach Winkel überblendet.
        Jedes Bild wird dabei waagerecht gestaucht, damit die Breite zum echten Winkel passt. */
@@ -226,10 +257,26 @@
       });
       /* Bodenschatten wird beim Drehen schmaler, bei der Seitenansicht fast ein Strich */
       shadow.style.setProperty('--sw', (0.3 + 0.7 * Math.abs(c)).toFixed(3));
+      if (r3d) r3d.setAngle(a);
     }
     if (frames.length === 5) setAngle(0);
     /* Die vier Dreh-Ansichten laden erst nach dem Seitenstart (oder beim ersten Scrollen),
        damit die Startseite schneller erscheint. */
+    /* 3D-Schläger nachladen: bis dahin zeigt die Seite das Foto, danach blendet sie weich um */
+    function load3d() {
+      var pin = heroEl.querySelector('.hero-pin');
+      var stack = heroEl.querySelector('.rstack');
+      import('./racket3d.min.js').then(function (m) {
+        var ctl = m.init(pin, stage, stack);
+        if (!ctl) return;
+        r3d = ctl;
+        stage.classList.add('r3d');
+        requestAnimationFrame(function () { ctl.canvas.classList.add('on'); });
+        setTimeout(function () { tilt.style.visibility = 'hidden'; }, 900);
+        setAngle(0);
+      }).catch(function () { /* Foto bleibt als Rückfall stehen */ });
+    }
+    window.addEventListener('load', function () { (window.requestIdleCallback || function (fn) { setTimeout(fn, 400); })(load3d); });
     var framesLoaded = false;
     function loadFrames() {
       if (framesLoaded) return;
@@ -252,8 +299,10 @@
         /* Phase 1 (erste Hälfte): halbe Drehung wie eine Karte, Größe wächst nur langsam.
            Phase 2: Wachstum beschleunigt stark, der Schläger blendet früh aus und ist weg. */
         var st = { a: 0 };
+        var fl = { t: 0 };
         tl.set(fly, { transformPerspective: 1100 }, 0)
           .to(st, { a: 180, ease: 'sine.inOut', duration: 0.6, onUpdate: function () { setAngle(st.a); } }, 0)
+          .to(fl, { t: 1, ease: 'none', duration: 1, onUpdate: function () { if (r3d) r3d.setFlight(fl.t); } }, 0)
           .to(fly, { scale: 9, xPercent: 6, yPercent: 5, ease: 'power3.in', duration: 1 }, 0)
           .to(fly, { autoAlpha: 0, ease: 'power1.in', duration: 0.2 }, 0.72)
           .to(shadow, { autoAlpha: 0, duration: 0.25 }, 0)
