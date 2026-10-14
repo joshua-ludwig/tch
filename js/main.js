@@ -266,13 +266,16 @@
         return Promise.resolve(m.init(pin, stage, stack)).then(function (ctl) {
           if (!ctl) return;
           r3d = ctl;
-          stage.classList.add('r3d');
           setAngle(0);
+          /* Standbild erst ausblenden, wenn der 3D-Schläger wirklich zeichnet */
+          return ctl.ready.then(function () { stage.classList.add('r3d'); });
         });
       }).catch(function () { /* ohne WebGL bleibt der Schläger weg, Bälle und Text bleiben */ });
     }
     /* Erst nach dem Einblenden des Heros (ca. 1,5 s) und wenn der Browser Zeit hat */
-    window.addEventListener('load', function () { setTimeout(function () { (window.requestIdleCallback || function (fn) { setTimeout(fn, 200); })(load3d, { timeout: 3000 }); }, 1500); });
+    /* Das Modul schon beim Seitenstart herunterladen, der Aufbau folgt kurz nach dem Laden */
+    if (!lite) { var pre = doc.createElement('link'); pre.rel = 'modulepreload'; pre.href = 'js/racket3d.min.js'; doc.head.appendChild(pre); }
+    window.addEventListener('load', function () { setTimeout(function () { (window.requestIdleCallback || function (fn) { setTimeout(fn, 100); })(load3d, { timeout: 1500 }); }, 400); });
 
     /* Scroll: linker Text bleibt, der Schläger dreht sich, kommt näher und fliegt weg */
     if (hasGsap && window.ScrollTrigger && !reduce) {
@@ -389,7 +392,9 @@
     if (!stage) return;
     function go() {
       if (window.matchMedia('(max-width: 980px)').matches) return;
-      import('./racket3d.min.js').then(function (m) { m.initCta(stage); }).catch(function () {});
+      import('./racket3d.min.js').then(function (m) {
+        return Promise.resolve(m.initCta(stage)).then(function (c) { if (c) return c.ready.then(function () { stage.classList.add('r3d'); }); });
+      }).catch(function () {});
     }
     if ('IntersectionObserver' in window) {
       var io = new IntersectionObserver(function (en) {

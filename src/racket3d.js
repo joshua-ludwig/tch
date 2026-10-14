@@ -66,6 +66,8 @@ export async function init(heroPin, stage, measureEl) {
   tilt.rotation.z = (-16 * Math.PI) / 180;
   scene.add(anchor); anchor.add(look); look.add(tilt); tilt.add(spin); spin.add(buildRacket());
   let ready = false;   // wird true, sobald die Shader im Hintergrund kompiliert sind
+  let resolveReady;
+  const readyP = new Promise((r) => { resolveReady = r; });   // damit die Seite das Standbild erst ausblendet, wenn der Schläger wirklich zeichnet
   await tick();
 
   const small = () => window.matchMedia('(max-width: 980px)').matches;   // Handy: kein Heranfliegen, Zeichenfläche = Bühne
@@ -105,7 +107,7 @@ export async function init(heroPin, stage, measureEl) {
     look.rotation.y = cur.x * 0.28; look.rotation.x = cur.y * 0.2;
     spin.rotation.y = (st.angle * Math.PI) / 180;
     const bob = Math.sin(t * (Math.PI * 2 / 7)) * st.floatPx / st.ppu;
-    anchor.position.set(st.ax, st.ay + bob - (1 - introE) * 70 / st.ppu, 0);
+    anchor.position.set(st.ax, st.ay + bob, 0);
     tilt.rotation.z = ((-16 + Math.sin(t * (Math.PI * 2 / 7)) * -1) * Math.PI) / 180;
     canvas.style.opacity = String(introE * (1 - smooth(0.72, 0.92, st.flight)));
     renderer.render(scene, camera);
@@ -115,7 +117,7 @@ export async function init(heroPin, stage, measureEl) {
   function loop(now) {
     raf = requestAnimationFrame(loop);
     if (!st.visible) return;
-    if (st.intro < 1) st.intro = Math.min(1, st.intro + (now - last) / 1300);
+    if (st.intro < 1) st.intro = Math.min(1, st.intro + (now - last) / 450);
     last = now;
     render(now);
   }
@@ -132,7 +134,7 @@ export async function init(heroPin, stage, measureEl) {
   }
 
   resize();
-  const go = () => { ready = true; last = performance.now(); resize(); };
+  const go = () => { ready = true; last = performance.now(); resize(); resolveReady(); };
   try { renderer.compileAsync(scene, camera).then(go, go); } catch (e) { go(); }
   if ('ResizeObserver' in window) new ResizeObserver(resize).observe(heroPin);
   window.addEventListener('resize', resize);
@@ -140,6 +142,7 @@ export async function init(heroPin, stage, measureEl) {
 
   return {
     canvas,
+    ready: readyP,
     setAngle(a) { st.angle = a; if (reduce) render(performance.now()); },
     setFlight(t) { st.flight = t; if (reduce) render(performance.now()); },
     resize
@@ -168,6 +171,8 @@ export async function initCta(stage) {
   tilt.rotation.z = (28 * Math.PI) / 180;
   scene.add(anchor); anchor.add(look); look.add(tilt); tilt.add(spin); spin.add(buildRacket());
   let ready = false;   // wird true, sobald die Shader im Hintergrund kompiliert sind
+  let resolveReady;
+  const readyP = new Promise((r) => { resolveReady = r; });   // damit die Seite das Standbild erst ausblendet, wenn der Schläger wirklich zeichnet
   await tick();
 
   const st = { ppu: 1, visible: true, intro: reduce ? 1 : 0 };
@@ -192,7 +197,7 @@ export async function initCta(stage) {
     cur.x += (mouse.x - cur.x) * 0.06; cur.y += (mouse.y - cur.y) * 0.06;
     look.rotation.y = cur.x * 0.3; look.rotation.x = cur.y * 0.2;
     spin.rotation.y = reduce ? 0.25 : Math.sin(t * 0.55) * 0.5;
-    anchor.position.y = (reduce ? 0 : Math.sin(t * (Math.PI * 2 / 7)) * 10 / st.ppu) - (1 - introE) * 40 / st.ppu;
+    anchor.position.y = (reduce ? 0 : Math.sin(t * (Math.PI * 2 / 7)) * 10 / st.ppu);
     tilt.rotation.z = ((28 + (reduce ? 0 : Math.sin(t * (Math.PI * 2 / 7)))) * Math.PI) / 180;
     canvas.style.opacity = String(introE);
     renderer.render(scene, camera);
@@ -202,7 +207,7 @@ export async function initCta(stage) {
   function loop(now) {
     requestAnimationFrame(loop);
     if (!st.visible) return;
-    if (st.intro < 1) st.intro = Math.min(1, st.intro + (now - last) / 1000);
+    if (st.intro < 1) st.intro = Math.min(1, st.intro + (now - last) / 450);
     last = now;
     render(now);
   }
@@ -217,8 +222,8 @@ export async function initCta(stage) {
     requestAnimationFrame(loop);
   }
   resize();
-  const go = () => { ready = true; last = performance.now(); resize(); };
+  const go = () => { ready = true; last = performance.now(); resize(); resolveReady(); };
   try { renderer.compileAsync(scene, camera).then(go, go); } catch (e) { go(); }
   if ('ResizeObserver' in window) new ResizeObserver(resize).observe(stage);
-  return { canvas, resize };
+  return { canvas, resize, ready: readyP };
 }
