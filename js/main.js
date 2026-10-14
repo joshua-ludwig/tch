@@ -7,11 +7,13 @@
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var hasGsap = !!window.gsap;
   root.classList.add('js');
+  /* Handy und Tablet: native Scrollphysik und weniger Effekte, damit nichts ruckelt */
+  var lite = window.matchMedia('(pointer: coarse), (max-width: 980px)').matches;
 
   /* Liquid-Glass-Verzerrung nur in Chromium-Browsern (backdrop-filter mit SVG-Filter) */
   try {
     var brands = (navigator.userAgentData && navigator.userAgentData.brands) || [];
-    if (brands.some(function (b) { return /Chromium/.test(b.brand); })) {
+    if (!lite && brands.some(function (b) { return /Chromium/.test(b.brand); })) {
       /* Erst nach dem Laden einschalten, damit der Seitenstart nicht auf den Filter wartet */
       window.addEventListener('load', function () { setTimeout(function () { root.classList.add('lg-ok'); }, 800); });
     }
@@ -19,7 +21,7 @@
 
   /* ---------- Sanftes Scrollen ---------- */
   var lenis = null;
-  if (!reduce && window.Lenis) {
+  if (!reduce && !lite && window.Lenis) {
     lenis = new Lenis({ duration: 1.1, smoothWheel: true });
     if (hasGsap && window.ScrollTrigger) {
       gsap.registerPlugin(ScrollTrigger);
@@ -48,7 +50,7 @@
     if (!el) return;
     e.preventDefault();
     var menu = doc.querySelector('.nav-menu');
-    if (menu) menu.classList.remove('open');
+    if (menu) { menu.classList.remove('open'); var hd = doc.querySelector('.site-header'); if (hd) hd.classList.remove('menu-open'); }
     scrollToTarget(el);
     if (history.replaceState) history.replaceState(null, '', '#' + m[1]);
   });
@@ -57,10 +59,17 @@
   var toggle = doc.querySelector('.nav-toggle');
   var menu = doc.querySelector('.nav-menu');
   if (toggle && menu) {
-    toggle.addEventListener('click', function () {
-      var open = menu.classList.toggle('open');
+    var header = doc.querySelector('.site-header');
+    var setMenu = function (open) {
+      menu.classList.toggle('open', open);
+      if (header) header.classList.toggle('menu-open', open);
       toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-    });
+      toggle.setAttribute('aria-label', open ? 'Menü schließen' : 'Menü öffnen');
+    };
+    toggle.addEventListener('click', function () { setMenu(!menu.classList.contains('open')); });
+    doc.addEventListener('keydown', function (e) { if (e.key === 'Escape') setMenu(false); });
+    doc.addEventListener('click', function (e) { if (menu.classList.contains('open') && !e.target.closest('.nav')) setMenu(false); });
+    menu.addEventListener('click', function (e) { if (e.target.closest('a')) setMenu(false); });
   }
 
   /* ---------- Kontaktformular ---------- */
@@ -121,7 +130,7 @@
   }
 
   /* ---------- Parallax in Fotorahmen ---------- */
-  if (hasGsap && window.ScrollTrigger && !reduce) {
+  if (hasGsap && window.ScrollTrigger && !reduce && !lite) {
     [].forEach.call(doc.querySelectorAll('[data-par]'), function (img) {
       gsap.fromTo(img, { yPercent: -5 }, {
         yPercent: 5, ease: 'none',
@@ -152,7 +161,12 @@
       var A = hex(a), B = hex(b);
       return 'rgb(' + A.map(function (v, i) { return Math.round(v + (B[i] - v) * t); }).join(',') + ')';
     }
+    var lastStep = -1;
     function apply(p) {
+      var step = Math.round(p * (lite ? 24 : 120));
+      if (step === lastStep) return;
+      lastStep = step;
+      p = step / (lite ? 24 : 120);
       var i = 0;
       while (i < stops.length - 2 && p > stops[i + 1].p) i++;
       var a = stops[i], b = stops[i + 1];
@@ -206,7 +220,7 @@
       });
     }
     layoutMesh();
-    blobs.forEach(function (o) {
+    if (!lite) blobs.forEach(function (o) {
       gsap.fromTo(o.el, { scale: 0.65, yPercent: 8 * o.depth }, {
         scale: 1.4, yPercent: -22 * o.depth, ease: 'none',
         scrollTrigger: { trigger: o.el, start: 'top bottom', end: 'bottom top', scrub: true }
