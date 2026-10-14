@@ -255,10 +255,15 @@
     var r3d = null;   /* 3D-Schläger (Three.js), wird nach dem Laden zugeschaltet */
 
     /* Schläger-Drehung: der 3D-Schläger (Three.js) dreht sich um die Längsachse, der Bodenschatten wird dabei schmaler */
+    var still = heroEl.querySelector('.rstill');
     function setAngle(a) {
       var c = Math.cos(a * Math.PI / 180);
       shadow.style.setProperty('--sw', (0.3 + 0.7 * Math.abs(c)).toFixed(3));
       if (r3d) r3d.setAngle(a);
+      /* Solange das 3D noch lädt, dreht sich das Standbild schon mit: es wird beim Drehen schmaler wie ein echter Schläger */
+      if (still && !stage.classList.contains('r3d')) {
+        still.style.transform = 'translate(-50%,-50%) scaleX(' + Math.max(0.1, Math.abs(c)).toFixed(3) + ')';
+      }
     }
     setAngle(0);
     /* 3D-Schläger nachladen, damit die Startseite schnell erscheint */
@@ -271,15 +276,15 @@
           if (!ctl) return;
           r3d = ctl;
           setAngle(0);
-          /* Standbild erst ausblenden, wenn der 3D-Schläger wirklich zeichnet */
-          return ctl.ready.then(function () { stage.classList.add('r3d'); });
+          /* Standbild erst ausblenden, wenn der 3D-Schläger komplett eingeblendet ist (sonst gibt es eine Lücke) */
+          return ctl.shown.then(function () { stage.classList.add('r3d'); });
         });
       }).catch(function () { /* ohne WebGL bleibt der Schläger weg, Bälle und Text bleiben */ });
     }
-    /* Erst nach dem Einblenden des Heros (ca. 1,5 s) und wenn der Browser Zeit hat */
+    /* So früh wie möglich: gleich nach dem Laden der Seite, sobald der Browser kurz Zeit hat */
     /* Das Modul schon beim Seitenstart herunterladen, der Aufbau folgt kurz nach dem Laden */
     if (!lite) { var pre = doc.createElement('link'); pre.rel = 'modulepreload'; pre.href = 'js/racket3d.min.js'; doc.head.appendChild(pre); }
-    window.addEventListener('load', function () { setTimeout(function () { (window.requestIdleCallback || function (fn) { setTimeout(fn, 100); })(load3d, { timeout: 1500 }); }, 400); });
+    window.addEventListener('load', function () { (window.requestIdleCallback || function (fn) { setTimeout(fn, 50); })(load3d, { timeout: 300 }); });
 
     /* Scroll: linker Text bleibt, der Schläger dreht sich, kommt näher und fliegt weg */
     if (hasGsap && window.ScrollTrigger && !reduce) {
@@ -397,7 +402,7 @@
     function go() {
       if (window.matchMedia('(max-width: 980px)').matches) return;
       import('./racket3d.min.js').then(function (m) {
-        return Promise.resolve(m.initCta(stage)).then(function (c) { if (c) return c.ready.then(function () { stage.classList.add('r3d'); }); });
+        return Promise.resolve(m.initCta(stage)).then(function (c) { if (c) return c.shown.then(function () { stage.classList.add('r3d'); }); });
       }).catch(function () {});
     }
     if ('IntersectionObserver' in window) {

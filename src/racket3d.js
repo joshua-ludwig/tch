@@ -67,7 +67,10 @@ export async function init(heroPin, stage, measureEl) {
   scene.add(anchor); anchor.add(look); look.add(tilt); tilt.add(spin); spin.add(buildRacket());
   let ready = false;   // wird true, sobald die Shader im Hintergrund kompiliert sind
   let resolveReady;
-  const readyP = new Promise((r) => { resolveReady = r; });   // damit die Seite das Standbild erst ausblendet, wenn der Schläger wirklich zeichnet
+  const readyP = new Promise((r) => { resolveReady = r; });
+  // "shown": der Schläger ist komplett eingeblendet. Erst dann darf das Standbild verschwinden (sonst gibt es eine Lücke)
+  let resolveShown, shownDone = false;
+  const shownP = new Promise((r) => { resolveShown = r; });   // damit die Seite das Standbild erst ausblendet, wenn der Schläger wirklich zeichnet
   await tick();
 
   const small = () => window.matchMedia('(max-width: 980px)').matches;   // Handy: kein Heranfliegen, Zeichenfläche = Bühne
@@ -120,6 +123,7 @@ export async function init(heroPin, stage, measureEl) {
     if (st.intro < 1) st.intro = Math.min(1, st.intro + (now - last) / 450);
     last = now;
     render(now);
+    if (!shownDone && ready && st.intro >= 1) { shownDone = true; resolveShown(); }
   }
   if (!reduce) {
     window.addEventListener('pointermove', (e) => {
@@ -134,7 +138,7 @@ export async function init(heroPin, stage, measureEl) {
   }
 
   resize();
-  const go = () => { ready = true; last = performance.now(); resize(); resolveReady(); };
+  const go = () => { ready = true; last = performance.now(); resize(); resolveReady(); if (st.intro >= 1 && !shownDone) { shownDone = true; resolveShown(); } };
   try { renderer.compileAsync(scene, camera).then(go, go); } catch (e) { go(); }
   if ('ResizeObserver' in window) new ResizeObserver(resize).observe(heroPin);
   window.addEventListener('resize', resize);
@@ -142,7 +146,7 @@ export async function init(heroPin, stage, measureEl) {
 
   return {
     canvas,
-    ready: readyP,
+    ready: readyP, shown: shownP,
     setAngle(a) { st.angle = a; if (reduce) render(performance.now()); },
     setFlight(t) { st.flight = t; if (reduce) render(performance.now()); },
     resize
@@ -172,7 +176,10 @@ export async function initCta(stage) {
   scene.add(anchor); anchor.add(look); look.add(tilt); tilt.add(spin); spin.add(buildRacket());
   let ready = false;   // wird true, sobald die Shader im Hintergrund kompiliert sind
   let resolveReady;
-  const readyP = new Promise((r) => { resolveReady = r; });   // damit die Seite das Standbild erst ausblendet, wenn der Schläger wirklich zeichnet
+  const readyP = new Promise((r) => { resolveReady = r; });
+  // "shown": der Schläger ist komplett eingeblendet. Erst dann darf das Standbild verschwinden (sonst gibt es eine Lücke)
+  let resolveShown, shownDone = false;
+  const shownP = new Promise((r) => { resolveShown = r; });   // damit die Seite das Standbild erst ausblendet, wenn der Schläger wirklich zeichnet
   await tick();
 
   const st = { ppu: 1, visible: true, intro: reduce ? 1 : 0 };
@@ -210,6 +217,7 @@ export async function initCta(stage) {
     if (st.intro < 1) st.intro = Math.min(1, st.intro + (now - last) / 450);
     last = now;
     render(now);
+    if (!shownDone && ready && st.intro >= 1) { shownDone = true; resolveShown(); }
   }
   if (!reduce) {
     window.addEventListener('pointermove', (e) => {
@@ -222,8 +230,8 @@ export async function initCta(stage) {
     requestAnimationFrame(loop);
   }
   resize();
-  const go = () => { ready = true; last = performance.now(); resize(); resolveReady(); };
+  const go = () => { ready = true; last = performance.now(); resize(); resolveReady(); if (st.intro >= 1 && !shownDone) { shownDone = true; resolveShown(); } };
   try { renderer.compileAsync(scene, camera).then(go, go); } catch (e) { go(); }
   if ('ResizeObserver' in window) new ResizeObserver(resize).observe(stage);
-  return { canvas, resize, ready: readyP };
+  return { canvas, resize, ready: readyP, shown: shownP };
 }

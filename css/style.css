@@ -156,8 +156,8 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--green-bright);outli
 .cta-grid{max-width:1220px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(24px,4vw,56px);align-items:center}
 .cta-stage{position:relative;--rh:clamp(300px,31vw,420px);height:clamp(320px,36vw,480px)}
 .cta-canvas{inset:auto;left:0;top:0;z-index:2}
-.rstill{position:absolute;left:50%;top:50%;height:121%;width:auto;max-width:none;aspect-ratio:620/892;transform:translate(-50%,-50%);transition:opacity .5s ease}
-.cta-still{position:absolute;left:50%;top:50%;height:95%;width:auto;max-width:none;aspect-ratio:1/1;transform:translate(-50%,-50%);filter:drop-shadow(0 22px 22px rgba(15,77,42,.28));animation:ctaFloat 7s ease-in-out infinite;transition:opacity .5s ease;z-index:1}
+.rstill{position:absolute;left:50%;top:50%;height:121%;width:auto;max-width:none;aspect-ratio:620/892;transform:translate(-50%,-50%);transition:opacity .12s linear}
+.cta-still{position:absolute;left:50%;top:50%;height:95%;width:auto;max-width:none;aspect-ratio:1/1;transform:translate(-50%,-50%);filter:drop-shadow(0 22px 22px rgba(15,77,42,.28));animation:ctaFloat 7s ease-in-out infinite;transition:opacity .12s linear;z-index:1}
 /* Sobald der 3D-Schläger zeichnet, blendet das Standbild weich aus */
 .stage.r3d .rstill,.cta-stage.r3d .cta-still{opacity:0}
 .cta-shadow{position:absolute;left:50%;bottom:4%;width:52%;height:7%;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(15,50,30,.34),transparent);filter:blur(8px)}
