@@ -48,12 +48,11 @@ RewriteRule ^(kontakt|mitgliedschaft)/?$ /#kontakt [NE,R=301,L]
 <IfModule mod_headers.c>
 Header always set Strict-Transport-Security "max-age=31536000"
 Header always set X-Content-Type-Options "nosniff"
-Header always set X-Frame-Options "DENY"
 Header always set Referrer-Policy "strict-origin-when-cross-origin"
 Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), interest-cohort=()"
 Header always set Cross-Origin-Opener-Policy "same-origin"
 Header always set X-Robots-Tag "noindex, nofollow, noarchive" env=TESTHOST
-Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self' https://joshualudwig.de https://www.joshualudwig.de"
 </IfModule>
 
 # Komprimierung
