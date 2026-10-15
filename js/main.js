@@ -252,39 +252,53 @@
     var ballsFg = heroEl.querySelector('.balls-fg');
     var shadow = heroEl.querySelector('.shadow');
     var scrollP = 0;
-    var r3d = null;   /* 3D-Schläger (Three.js), wird nach dem Laden zugeschaltet */
-
-    /* Schläger-Drehung: der 3D-Schläger (Three.js) dreht sich um die Längsachse, der Bodenschatten wird dabei schmaler */
-    var still = heroEl.querySelector('.rstill');
+    /* Schläger-Drehung aus vorgerenderten Bildern: 13 Ansichten von vorn (0 Grad) bis zur Seite (90 Grad), alle 7,5 Grad.
+       Für 90 bis 180 Grad wird dieselbe Ansicht gespiegelt, zwischen zwei Ansichten wird überblendet. */
+    var frames = [].slice.call(heroEl.querySelectorAll('.rf'));
+    var STEP = 7.5;
+    var framesReady = frames.map(function (f, k) { return k === 0; });
+    var lastAngle = 0;
     function setAngle(a) {
+      lastAngle = a;
       var c = Math.cos(a * Math.PI / 180);
       shadow.style.setProperty('--sw', (0.3 + 0.7 * Math.abs(c)).toFixed(3));
-      if (r3d) r3d.setAngle(a);
-      /* Solange das 3D noch lädt, dreht sich das Standbild schon mit: es wird beim Drehen schmaler wie ein echter Schläger */
-      if (still && !stage.classList.contains('r3d')) {
-        still.style.transform = 'translate(-50%,-50%) scaleX(' + Math.max(0.1, Math.abs(c)).toFixed(3) + ')';
+      if (frames.length < 2) return;
+      var mirror = a > 90, mm2 = mirror ? 180 - a : a;
+      var i = Math.min(frames.length - 2, Math.floor(mm2 / STEP));
+      var f = (mm2 - i * STEP) / STEP, t = f * f * (3 - 2 * f);
+      var w = frames.map(function () { return 0; });
+      w[i] = 1 - t; w[i + 1] = t;
+      /* Ist eine Ansicht noch nicht geladen, übernimmt die nächste geladene ihren Anteil */
+      for (var k = 0; k < frames.length; k++) {
+        if (w[k] > 0 && !framesReady[k]) {
+          var near = -1;
+          for (var d = 1; d < frames.length && near < 0; d++) {
+            if (k - d >= 0 && framesReady[k - d]) near = k - d;
+            else if (k + d < frames.length && framesReady[k + d]) near = k + d;
+          }
+          if (near >= 0) w[near] += w[k];
+          w[k] = 0;
+        }
       }
+      frames.forEach(function (el, k) {
+        el.style.opacity = w[k] < 0.004 ? '0' : Math.min(1, w[k]).toFixed(3);
+        el.style.transform = mirror ? 'scaleX(-1)' : '';
+      });
     }
     setAngle(0);
-    /* 3D-Schläger nachladen, damit die Startseite schnell erscheint */
-    function load3d() {
-      if (window.matchMedia('(max-width: 980px)').matches) return;   /* Handy und Tablet zeigen ein Bild statt 3D */
-      var pin = heroEl.querySelector('.hero-pin');
-      var stack = heroEl.querySelector('.rstack');
-      import('./racket3d.min.js').then(function (m) {
-        return Promise.resolve(m.init(pin, stage, stack)).then(function (ctl) {
-          if (!ctl) return;
-          r3d = ctl;
-          setAngle(0);
-          /* Standbild erst ausblenden, wenn der 3D-Schläger komplett eingeblendet ist (sonst gibt es eine Lücke) */
-          return ctl.shown.then(function () { stage.classList.add('r3d'); });
-        });
-      }).catch(function () { /* ohne WebGL bleibt der Schläger weg, Bälle und Text bleiben */ });
+    /* Die weiteren Ansichten laden erst nach dem Seitenstart. Handy und Tablet drehen nicht und brauchen nur die erste. */
+    var framesLoading = false;
+    function loadFrames() {
+      if (framesLoading || lite) return;
+      framesLoading = true;
+      frames.forEach(function (el, k) {
+        if (k === 0) return;
+        el.onload = function () { framesReady[k] = true; setAngle(lastAngle); };
+        el.src = el.getAttribute('data-src');
+      });
     }
-    /* So früh wie möglich: gleich nach dem Laden der Seite, sobald der Browser kurz Zeit hat */
-    /* Das Modul schon beim Seitenstart herunterladen, der Aufbau folgt kurz nach dem Laden */
-    if (!lite) { var pre = doc.createElement('link'); pre.rel = 'modulepreload'; pre.href = 'js/racket3d.min.js'; doc.head.appendChild(pre); }
-    window.addEventListener('load', function () { (window.requestIdleCallback || function (fn) { setTimeout(fn, 50); })(load3d, { timeout: 300 }); });
+    window.addEventListener('load', function () { (window.requestIdleCallback || function (fn) { setTimeout(fn, 100); })(loadFrames, { timeout: 800 }); });
+    window.addEventListener('scroll', loadFrames, { passive: true, once: true });
 
     /* Scroll: linker Text bleibt, der Schläger dreht sich, kommt näher und fliegt weg */
     if (hasGsap && window.ScrollTrigger && !reduce) {
@@ -299,10 +313,8 @@
         /* Phase 1 (erste Hälfte): halbe Drehung wie eine Karte, Größe wächst nur langsam.
            Phase 2: Wachstum beschleunigt stark, der Schläger blendet früh aus und ist weg. */
         var st = { a: 0 };
-        var fl = { t: 0 };
         tl.set(fly, { transformPerspective: 1100 }, 0)
           .to(st, { a: 180, ease: 'sine.inOut', duration: 0.6, onUpdate: function () { setAngle(st.a); } }, 0)
-          .to(fl, { t: 1, ease: 'none', duration: 1, onUpdate: function () { if (r3d) r3d.setFlight(fl.t); } }, 0)
           .to(fly, { scale: 9, xPercent: 6, yPercent: 5, ease: 'power3.in', duration: 1 }, 0)
           .to(fly, { autoAlpha: 0, ease: 'power1.in', duration: 0.2 }, 0.72)
           .to(shadow, { autoAlpha: 0, duration: 0.25 }, 0)
@@ -393,24 +405,6 @@
       });
       requestAnimationFrame(loop);
     })();
-  })();
-
-  /* ---------- "Spiel bei uns": derselbe 3D-Schläger wie im Hero, geladen kurz vor dem Sichtbarwerden ---------- */
-  (function ctaRacket() {
-    var stage = doc.querySelector('.cta-stage');
-    if (!stage) return;
-    function go() {
-      if (window.matchMedia('(max-width: 980px)').matches) return;
-      import('./racket3d.min.js').then(function (m) {
-        return Promise.resolve(m.initCta(stage)).then(function (c) { if (c) return c.shown.then(function () { stage.classList.add('r3d'); }); });
-      }).catch(function () {});
-    }
-    if ('IntersectionObserver' in window) {
-      var io = new IntersectionObserver(function (en) {
-        if (en[0].isIntersecting) { io.disconnect(); go(); }
-      }, { rootMargin: '600px 0px' });
-      io.observe(stage);
-    } else { go(); }
   })();
 
   /* ---------- "Spiel bei uns": Bälle weichen aus und werden sandig ---------- */

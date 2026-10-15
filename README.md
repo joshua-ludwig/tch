@@ -41,11 +41,7 @@ Empfänger und Absender stehen oben in der Datei (`$EMPFAENGER`, `$ABSENDER`).
 Lege am besten ein Postfach `kontakt@tc-heiligenwald.de` an und trage es als Absender ein,
 sonst landen Mails leichter im Spam. Nach dem Upload einmal eine Testnachricht senden.
 
-## 3D-Schläger neu bauen
+## Schläger-Bilder
 
-Quelle: `src/racket3d.js` (Three.js, komplett im Code gebaut). Das Bundle `js/racket3d.min.js` entsteht mit:
-
-```bash
-npm i three esbuild
-npx esbuild src/racket3d.js --bundle --minify --format=esm --outfile=js/racket3d.min.js
-```
+Der Schläger im Hero besteht aus 13 vorgerenderten Ansichten (`assets/hero/web/racket-00.webp` bis `racket-12.webp`, von vorn bis zur Seite, alle 7,5 Grad). `js/main.js` blendet sie beim Scrollen ineinander über, ab 90 Grad wird gespiegelt. Es wird kein WebGL und keine 3D-Bibliothek geladen.
+Die Bilder sind aus dem Code-Modell `src/racket-model.js` (Three.js) gerendert. Wenn sich das Modell ändert, müssen die Bilder neu gerendert werden (Ansichten ohne Neigung, 900 x 1870 Pixel, danach auf 380 Pixel Breite als WebP).

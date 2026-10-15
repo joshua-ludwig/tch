@@ -108,7 +108,6 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--green-bright);outli
 @keyframes racketIn{from{opacity:0;transform:translateY(70px) rotate(6deg) scale(.92)}to{opacity:1;transform:translateY(0) rotate(16deg) scale(1)}}
 @keyframes floaty{0%,100%{transform:translateY(0) rotate(16deg)}50%{transform:translateY(-18px) rotate(14deg)}}
 .tilt{transform-style:preserve-3d;will-change:transform}
-.r3d-canvas{position:absolute;z-index:3;pointer-events:none;opacity:0}
 .shadow{position:absolute;left:50%;bottom:3vh;width:calc(60%*var(--sw,1));max-width:calc(340px*var(--sw,1));height:5vh;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(15,50,30,.42),transparent);filter:blur(8px);animation:shadowPulse 7s ease-in-out 1.45s infinite}
 @keyframes shadowPulse{0%,100%{transform:translateX(-50%) scale(1);opacity:.9}50%{transform:translateX(-50%) scale(.86);opacity:.65}}
 .b{position:absolute;width:calc(var(--rh)*.098*var(--s));will-change:transform}
@@ -155,11 +154,10 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--green-bright);outli
 .gastro-photo{aspect-ratio:4/3.2}
 .cta-grid{max-width:1220px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(24px,4vw,56px);align-items:center}
 .cta-stage{position:relative;--rh:clamp(300px,31vw,420px);height:clamp(320px,36vw,480px)}
-.cta-canvas{inset:auto;left:0;top:0;z-index:2}
-.rstill{position:absolute;left:50%;top:50%;height:121%;width:auto;max-width:none;aspect-ratio:620/892;transform:translate(-50%,-50%);transition:opacity .12s linear}
+.rframes{position:absolute;left:50%;top:50%;height:121%;aspect-ratio:380/790;transform:translate(-50%,-50%)}
+.rf{position:absolute;left:0;top:0;width:100%;height:100%;max-width:none;opacity:0;will-change:opacity}
+.rf:first-child{opacity:1}
 .cta-still{position:absolute;left:50%;top:50%;height:95%;width:auto;max-width:none;aspect-ratio:1/1;transform:translate(-50%,-50%);filter:drop-shadow(0 22px 22px rgba(15,77,42,.28));animation:ctaFloat 7s ease-in-out infinite;transition:opacity .12s linear;z-index:1}
-/* Sobald der 3D-Schläger zeichnet, blendet das Standbild weich aus */
-.stage.r3d .rstill,.cta-stage.r3d .cta-still{opacity:0}
 .cta-shadow{position:absolute;left:50%;bottom:4%;width:52%;height:7%;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(15,50,30,.34),transparent);filter:blur(8px)}
 .cdust{position:absolute;left:0;top:0;height:auto;opacity:0;pointer-events:none;z-index:4;transform:translate(-50%,-50%)}
 .cta-stage .b{z-index:3}
@@ -386,7 +384,7 @@ a.sp:hover{filter:none;opacity:1;transform:translateY(-4px)}
 /* Handy und Tablet: der Schläger ist ein scharfes Bild aus dem 3D-Modell (kein WebGL, spart Akku und Ruckeln) */
 @media (max-width:980px){
 }
-@media (max-width:980px){.rstill{height:105%}}
+@media (max-width:980px){.rframes{height:105%}}
 @keyframes ctaFloat{0%,100%{transform:translate(-50%,-50%)}50%{transform:translate(-50%,-53%)}}
 /* Handy und Tablet: weniger Glasflächen, sonst ruckelt das Scrollen */
 @media (max-width:980px),(pointer:coarse){
