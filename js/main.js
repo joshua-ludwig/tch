@@ -254,6 +254,7 @@
     if (reduce) { btn.style.display = 'none'; return; }       /* ohne Bewegung bleibt das Ruhebild stehen */
     var N = 24, CONTACT = 13, FRAME_MS = 38;
     var ctx = cv.getContext('2d');
+    var idle = stage.querySelector('.swing-idle');
     var imgs = [], settled = 0, ready = false, busy = false, wantPlay = false;
 
     function draw(i) {
@@ -261,6 +262,7 @@
       if (!im || !im.complete || !im.naturalWidth) return;
       ctx.clearRect(0, 0, cv.width, cv.height);
       ctx.drawImage(im, 0, 0, cv.width, cv.height);
+      if (idle) { idle.style.visibility = 'hidden'; idle = null; }   /* Ruhebild darunter ausblenden, sonst steht ein zweiter Schläger */
     }
     function done() {
       settled++;
