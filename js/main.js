@@ -419,8 +419,8 @@
         b.type = 'button';
         b.className = 'tile rv';
         b.setAttribute('data-album', a.slug);
-        b.setAttribute('aria-label', 'Album ' + a.title + ' ' + a.year + ' öffnen');
-        b.innerHTML = '<img loading="lazy" src="' + thumb + a.cover + '.webp" alt=""><span class="cap"><b>' + a.title + '</b><span>' + a.year + ' · ' + a.photos.length + ' Fotos</span></span>';
+        b.setAttribute('aria-label', a.title + ' ' + a.year + ' · ' + a.photos.length + ' Fotos, Album öffnen');
+        b.innerHTML = '<img loading="lazy" src="' + thumb + a.cover + '.webp" alt=""><span class="cap"><b>' + a.title + '</b> <span>' + a.year + ' · ' + a.photos.length + ' Fotos</span></span>';
         grid.appendChild(b);
         if (!reduce && 'IntersectionObserver' in window) {
           var o = new IntersectionObserver(function (en) { if (en[0].isIntersecting) { b.classList.add('in'); o.disconnect(); } }, { threshold: 0.1 });
