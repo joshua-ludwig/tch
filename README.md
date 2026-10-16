@@ -41,7 +41,8 @@ Empfänger und Absender stehen oben in der Datei (`$EMPFAENGER`, `$ABSENDER`).
 Lege am besten ein Postfach `kontakt@tc-heiligenwald.de` an und trage es als Absender ein,
 sonst landen Mails leichter im Spam. Nach dem Upload einmal eine Testnachricht senden.
 
-## Schläger-Bilder
+## Bilder im Hero und bei "Spiel bei uns"
 
-Der Schläger im Hero besteht aus 13 vorgerenderten Ansichten (`assets/hero/web/racket-00.webp` bis `racket-12.webp`, von vorn bis zur Seite, alle 7,5 Grad). `js/main.js` blendet sie beim Scrollen ineinander über, ab 90 Grad wird gespiegelt. Es wird kein WebGL und keine 3D-Bibliothek geladen.
-Die Bilder sind aus dem Code-Modell `src/racket-model.js` (Three.js) gerendert. Wenn sich das Modell ändert, müssen die Bilder neu gerendert werden (Ansichten ohne Neigung, 900 x 1870 Pixel, danach auf 380 Pixel Breite als WebP).
+- **Hero:** Luftbild der Anlage (`assets/img/anlage-am-itzenplitzer-weiher-luftbild.webp`), ein einfaches Foto ohne 3D. Es steht auch als Album "Unsere Anlage" in der Galerie (20 Drohnenfotos, in `js/gallery-data.js`).
+- **Spiel bei uns:** Der Schläger besteht aus 22 vorgerenderten Bildern (`assets/hero/web/swing-00.webp` bis `swing-21.webp`, Schlagbewegung ohne Person). Ein Klick auf den Schläger oder auf "Vorhand schlagen" spielt sie ab (`js/main.js`, Funktion `swing`), der Ball fliegt weg, ein neuer fällt ein. Bei "weniger Bewegung" bleibt nur das Ruhebild.
+- Die Bilder sind aus dem Code-Modell `src/racket-model.js` (Three.js) gerendert (800 x 800 Pixel, danach 520 Pixel als WebP). Wenn sich das Modell ändert, müssen sie neu gerendert werden. Auf der Seite läuft kein WebGL.

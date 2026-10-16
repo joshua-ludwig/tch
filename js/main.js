@@ -238,173 +238,82 @@
     window.addEventListener('load', function () { layoutMesh(); ScrollTrigger.refresh(); });
   })();
 
-  /* ---------- Hero ---------- */
-  (function hero() {
-    var heroEl = doc.querySelector('.hero');
-    if (!heroEl) return;
-    var stage = heroEl.querySelector('.stage');
-    var tilt = heroEl.querySelector('.tilt');
-    var fgL = heroEl.querySelector('.layer-fg');
-    var bgL = heroEl.querySelector('.layer-bg');
-    var dust = heroEl.querySelector('.hdust');
-    var fly = heroEl.querySelector('.fly');
-    var ballsBg = heroEl.querySelector('.balls-bg');
-    var ballsFg = heroEl.querySelector('.balls-fg');
-    var shadow = heroEl.querySelector('.shadow');
-    var scrollP = 0;
-    /* Schläger-Drehung aus vorgerenderten Bildern: 13 Ansichten von vorn (0 Grad) bis zur Seite (90 Grad), alle 7,5 Grad.
-       Für 90 bis 180 Grad wird dieselbe Ansicht gespiegelt, zwischen zwei Ansichten wird überblendet. */
-    var frames = [].slice.call(heroEl.querySelectorAll('.rf'));
-    var STEP = 7.5;
-    var framesReady = frames.map(function (f, k) { return k === 0; });
-    var lastAngle = 0;
-    function setAngle(a) {
-      lastAngle = a;
-      var c = Math.cos(a * Math.PI / 180);
-      shadow.style.setProperty('--sw', (0.3 + 0.7 * Math.abs(c)).toFixed(3));
-      if (frames.length < 2) return;
-      var mirror = a > 90, mm2 = mirror ? 180 - a : a;
-      var i = Math.min(frames.length - 2, Math.floor(mm2 / STEP));
-      var f = (mm2 - i * STEP) / STEP, t = f * f * (3 - 2 * f);
-      var w = frames.map(function () { return 0; });
-      w[i] = 1 - t; w[i + 1] = t;
-      /* Ist eine Ansicht noch nicht geladen, übernimmt die nächste geladene ihren Anteil */
-      for (var k = 0; k < frames.length; k++) {
-        if (w[k] > 0 && !framesReady[k]) {
-          var near = -1;
-          for (var d = 1; d < frames.length && near < 0; d++) {
-            if (k - d >= 0 && framesReady[k - d]) near = k - d;
-            else if (k + d < frames.length && framesReady[k + d]) near = k + d;
-          }
-          if (near >= 0) w[near] += w[k];
-          w[k] = 0;
-        }
+  /* ---------- "Spiel bei uns": Klick auf den Schläger schlägt eine Vorhand ---------- */
+  /* 22 vorgerenderte Bilder (nur der Schläger, kein Mensch) laufen als Schlagbewegung ab. Beim Treffpunkt (Bild 12)
+     fliegt der Ball weg, danach fällt ein neuer Ball ein. Die Bilder laden erst kurz vor dem Sichtbarwerden. */
+  (function swing() {
+    var stage = doc.querySelector('.cta-stage');
+    var btn = doc.querySelector('.swing-btn');
+    if (!stage || !btn) return;
+    var wrap = stage.querySelector('.swing');
+    var cv = stage.querySelector('.swing-canvas');
+    var ball = stage.querySelector('.swing-ball');
+    var ring = stage.querySelector('.swing-ring');
+    if (!wrap || !cv || !ball || !cv.getContext) return;
+    if (reduce) { btn.hidden = true; return; }       /* ohne Bewegung bleibt das Ruhebild stehen */
+    var N = 22, CONTACT = 12, FRAME_MS = 30;
+    var ctx = cv.getContext('2d');
+    var imgs = [], loaded = 0, ready = false, busy = false, wantPlay = false;
+
+    function draw(i) { ctx.clearRect(0, 0, cv.width, cv.height); ctx.drawImage(imgs[i], 0, 0, cv.width, cv.height); }
+    function load() {
+      if (imgs.length) return;
+      for (var i = 0; i < N; i++) {
+        var im = new Image();
+        im.decoding = 'async';
+        im.onload = function () {
+          loaded++;
+          if (loaded === N) { ready = true; draw(0); if (wantPlay) { wantPlay = false; play(); } }
+        };
+        im.src = 'assets/hero/web/swing-' + (i < 10 ? '0' : '') + i + '.webp';
+        imgs.push(im);
       }
-      frames.forEach(function (el, k) {
-        el.style.opacity = w[k] < 0.004 ? '0' : Math.min(1, w[k]).toFixed(3);
-        el.style.transform = mirror ? 'scaleX(-1)' : '';
-      });
     }
-    setAngle(0);
-    /* Die weiteren Ansichten laden erst nach dem Seitenstart. Handy und Tablet drehen nicht und brauchen nur die erste. */
-    var framesLoading = false;
-    function loadFrames() {
-      if (framesLoading || lite) return;
-      framesLoading = true;
-      frames.forEach(function (el, k) {
-        if (k === 0) return;
-        el.onload = function () { framesReady[k] = true; setAngle(lastAngle); };
-        el.src = el.getAttribute('data-src');
-      });
-    }
-    window.addEventListener('load', function () { (window.requestIdleCallback || function (fn) { setTimeout(fn, 100); })(loadFrames, { timeout: 800 }); });
-    window.addEventListener('scroll', loadFrames, { passive: true, once: true });
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (en) { if (en[0].isIntersecting) { io.disconnect(); load(); } }, { rootMargin: '700px 0px' });
+      io.observe(stage);
+    } else { load(); }
 
-    /* Scroll: linker Text bleibt, der Schläger dreht sich, kommt näher und fliegt weg */
-    if (hasGsap && window.ScrollTrigger && !reduce) {
-      var mm = gsap.matchMedia();
-      mm.add('(min-width: 981px)', function () {
-        var tl = gsap.timeline({
-          scrollTrigger: {
-            trigger: heroEl, start: 'top top', end: '+=100%', pin: true, scrub: 0.5, anticipatePin: 1,
-            onUpdate: function (st) { scrollP = st.progress; }
-          }
-        });
-        /* Phase 1 (erste Hälfte): halbe Drehung wie eine Karte, Größe wächst nur langsam.
-           Phase 2: Wachstum beschleunigt stark, der Schläger blendet früh aus und ist weg. */
-        var st = { a: 0 };
-        tl.set(fly, { transformPerspective: 1100 }, 0)
-          .to(st, { a: 180, ease: 'sine.inOut', duration: 0.6, onUpdate: function () { setAngle(st.a); } }, 0)
-          .to(fly, { scale: 9, xPercent: 6, yPercent: 5, ease: 'power3.in', duration: 1 }, 0)
-          .to(fly, { autoAlpha: 0, ease: 'power1.in', duration: 0.2 }, 0.72)
-          .to(shadow, { autoAlpha: 0, duration: 0.25 }, 0)
-          .to(ballsBg, { scale: 2.4, autoAlpha: 0, ease: 'power1.in', duration: 0.45 }, 0.05)
-          .to(ballsFg, { scale: 3.6, autoAlpha: 0, ease: 'power1.in', duration: 0.4 }, 0.02);
-      });
+    function flyBall() {
+      ball.animate([
+        { transform: 'translate(-50%,-50%) scale(1) rotate(0deg)', opacity: 1 },
+        { transform: 'translate(calc(-50% + 9vw),calc(-50% - 22%)) scale(.8) rotate(160deg)', opacity: 1, offset: 0.35 },
+        { transform: 'translate(calc(-50% + 22vw),calc(-50% - 12%)) scale(.3) rotate(420deg)', opacity: 0 }
+      ], { duration: 950, easing: 'cubic-bezier(.2,.7,.4,1)', fill: 'forwards' });
+      ring.animate([
+        { transform: 'translate(-50%,-50%) scale(.2)', opacity: 0.7 },
+        { transform: 'translate(-50%,-50%) scale(1.8)', opacity: 0 }
+      ], { duration: 520, easing: 'ease-out' });
     }
-
-    /* Maus: Schläger kippt, Bälle weichen aus und werden sandig */
-    var balls = [].map.call(stage.querySelectorAll('.b'), function (el, i) {
-      return {
-        el: el, i: i, rx: 0, ry: 0, sand: 0, near: false, last: -9,
-        ang: parseFloat(el.getAttribute('data-r')) || 0,
-        sh: el.closest('.layer-bg') ? -18 : 40,
-        dur: [5, 7, 6, 8, 5.5, 6.5][i % 6]
-      };
-    });
-    /* Maße einmal merken statt in jedem Frame neu zu messen (vermeidet erzwungene Layout-Berechnungen) */
-    var rect = stage.getBoundingClientRect();
-    var rectDirty = false;
-    function measure() {
-      balls.forEach(function (b) { b.w = b.el.offsetWidth; b.h = b.el.offsetHeight; b.ox = b.el.offsetLeft; b.oy = b.el.offsetTop; });
-      rect = stage.getBoundingClientRect();
-      rectDirty = false;
+    function newBall() {
+      ball.getAnimations().forEach(function (an) { an.cancel(); });
+      var done = ball.animate([
+        { transform: 'translate(-50%,calc(-50% - 230%)) scale(1)', opacity: 0 },
+        { transform: 'translate(-50%,-50%) scale(1)', opacity: 1, offset: 0.5 },
+        { transform: 'translate(-50%,calc(-50% - 70%)) scale(1)', opacity: 1, offset: 0.7 },
+        { transform: 'translate(-50%,-50%) scale(1)', opacity: 1, offset: 0.85 },
+        { transform: 'translate(-50%,calc(-50% - 14%)) scale(1)', opacity: 1, offset: 0.93 },
+        { transform: 'translate(-50%,-50%) scale(1)', opacity: 1 }
+      ], { duration: 1100, easing: 'ease-in' });
+      done.onfinish = function () { busy = false; btn.removeAttribute('aria-busy'); };
     }
-    measure();
-    window.addEventListener('resize', measure);
-    window.addEventListener('load', measure);
-    window.addEventListener('scroll', function () { rectDirty = true; }, { passive: true });
-    var mouse = { cx: -9999, cy: -9999, x: 0, y: 0 };
-    var cur = { x: 0, y: 0 };
-    window.addEventListener('pointermove', function (e) {
-      mouse.cx = e.clientX; mouse.cy = e.clientY;
-      mouse.x = e.clientX / (window.innerWidth || 1) - 0.5;
-      mouse.y = e.clientY / (window.innerHeight || 1) - 0.5;
-    }, { passive: true });
-    doc.addEventListener('pointerleave', function () { mouse.cx = -9999; mouse.cy = -9999; mouse.x = 0; mouse.y = 0; });
-
-    function puff(px, py, ballW) {
-      if (reduce || !dust || !dust.animate) return;
-      /* Wolke wächst mit dem Ball: etwa das 2,6-fache seines Durchmessers */
-      dust.style.width = Math.round(ballW * 2.6) + 'px';
-      dust.style.left = px + 'px';
-      dust.style.top = py + 'px';
-      dust.animate([
-        { opacity: 0, transform: 'translate(-50%,-50%) scale(.25)' },
-        { opacity: 0.9, transform: 'translate(-50%,-50%) scale(.8)', offset: 0.35 },
-        { opacity: 0, transform: 'translate(-50%,-50%) scale(1.25)' }
-      ], { duration: 800, easing: 'cubic-bezier(.2,.7,.3,1)' });
+    function play() {
+      if (busy) return;
+      if (!ready) { wantPlay = true; load(); return; }
+      busy = true;
+      btn.setAttribute('aria-busy', 'true');
+      var start = null, hit = false;
+      (function step(now) {
+        if (start === null) start = now;
+        var f = Math.min(N - 1, Math.floor((now - start) / FRAME_MS));
+        draw(f);
+        if (!hit && f >= CONTACT) { hit = true; flyBall(); }
+        if (f < N - 1) requestAnimationFrame(step);
+        else setTimeout(function () { draw(0); newBall(); }, 380);
+      })(performance.now());
     }
-
-    if (reduce) return;
-    (function loop() {
-      var t = performance.now() / 1000;
-      cur.x += (mouse.x - cur.x) * 0.06;
-      cur.y += (mouse.y - cur.y) * 0.06;
-      var calm = scrollP < 0.03;
-      var tx = calm ? cur.x : 0, ty = calm ? cur.y : 0;
-      tilt.style.transform = 'rotateY(' + (tx * 16).toFixed(2) + 'deg) rotateX(' + (-ty * 12).toFixed(2) + 'deg)';
-      fgL.style.transform = 'translate(' + (cur.x * 40).toFixed(1) + 'px,' + (cur.y * 26).toFixed(1) + 'px)';
-      bgL.style.transform = 'translate(' + (cur.x * -18).toFixed(1) + 'px,' + (cur.y * -12).toFixed(1) + 'px)';
-      if (rectDirty) { rect = stage.getBoundingClientRect(); rectDirty = false; }
-      var mx = mouse.cx - rect.left, my = mouse.cy - rect.top;
-      balls.forEach(function (b) {
-        var w = b.w;
-        var cx = b.ox + w / 2 + cur.x * b.sh;
-        var cy = b.oy + b.h / 2 + cur.y * b.sh * 0.66;
-        var dx = mx - cx, dy = my - cy;
-        var d = Math.hypot(dx, dy) || 1;
-        var rad = w * 0.75 + 30, R = rad + 120;
-        var pushX = 0, pushY = 0;
-        if (calm && d < R) { var f = (R - d) / R; pushX = -(dx / d) * f * 36; pushY = -(dy / d) * f * 36; }
-        if (calm && d < rad) {
-          if (!b.near && b.sand < 0.04 && t - b.last > 1.5) { puff(cx, cy, w); b.last = t; }
-          b.near = true;
-          b.sand = Math.min(1, b.sand + 0.016);
-        } else {
-          b.near = false;
-          b.sand = Math.max(0, b.sand - 0.0035);
-        }
-        b.el.style.setProperty('--sand', b.sand.toFixed(3));
-        b.rx += (pushX - b.rx) * 0.1;
-        b.ry += (pushY - b.ry) * 0.1;
-        b.ang += 0.18 + (calm && d < R ? 0.6 : 0);
-        var ph = (t + b.i * 0.7) * (Math.PI * 2 / b.dur);
-        var fy = Math.sin(ph) * 12, fa = Math.cos(ph) * 6;
-        b.el.style.transform = 'translate(' + b.rx.toFixed(1) + 'px,' + (b.ry + fy).toFixed(1) + 'px) rotate(' + (b.ang + fa).toFixed(1) + 'deg)';
-      });
-      requestAnimationFrame(loop);
-    })();
+    wrap.addEventListener('click', play);
+    btn.addEventListener('click', play);
   })();
 
   /* ---------- "Spiel bei uns": Bälle weichen aus und werden sandig ---------- */

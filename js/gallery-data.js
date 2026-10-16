@@ -1,6 +1,34 @@
 /* Alben der Galerie, Reihenfolge wie auf der alten Seite */
 window.ALBUMS = [
  {
+  "slug": "2026-unsere-anlage",
+  "year": "2026",
+  "title": "Unsere Anlage",
+  "cover": "anlage-am-itzenplitzer-weiher-luftbild",
+  "photos": [
+   "anlage-am-itzenplitzer-weiher-luftbild",
+   "clubheim-und-sandplaetze-luftbild-1",
+   "clubheim-und-sandplaetze-luftbild-2",
+   "clubheim-und-sandplaetze-frontal-1",
+   "clubheim-und-sandplaetze-frontal-2",
+   "clubheim-terrasse-luftbild",
+   "sandplaetze-und-clubheim-schraeg-1",
+   "sandplaetze-und-clubheim-schraeg-2",
+   "sechs-sandplaetze-und-clubheim-von-oben",
+   "sandplaetze-clubheim-und-umgebung-von-oben",
+   "sechs-sandplaetze-senkrecht-von-oben",
+   "anlage-weiher-und-sandplaetze-luftbild-1",
+   "anlage-weiher-und-sandplaetze-luftbild-2",
+   "anlage-weiher-und-sandplaetze-luftbild-3",
+   "anlage-weiher-und-wehrturm-luftbild",
+   "sandplaetze-und-biergarten-sommer-luftbild",
+   "clubheim-biergarten-und-sandplaetze-sommer",
+   "sandplaetze-und-clubheim-sommer-schraeg",
+   "sandplaetze-von-oben-sommer-mit-parkplatz",
+   "umgebung-der-anlage-luftbild"
+  ]
+ },
+ {
   "slug": "2025-weihnachtsfeier",
   "year": "2025",
   "title": "Weihnachtsfeier",

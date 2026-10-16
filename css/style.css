@@ -80,7 +80,6 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--green-bright);outli
 .hero{position:relative;background:var(--off)}
 .hero-pin{position:relative;height:100vh;min-height:640px;overflow:hidden}
 .hero-bg{position:absolute;inset:0;background:radial-gradient(55% 62% at 74% 46%,#fff 0%,rgba(246,245,239,0) 70%)}
-.floor{position:absolute;left:-30%;width:160%;bottom:-6%;height:66%;z-index:1;background:url("../assets/hero/web/clay.webp") center/cover;transform:perspective(800px) rotateX(62deg);transform-origin:50% 100%;-webkit-mask-image:linear-gradient(to top,#000 55%,transparent 100%);mask-image:linear-gradient(to top,#000 55%,transparent 100%);opacity:.94}
 .hero-grid{position:relative;z-index:5;display:grid;grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr);align-items:center;gap:2vw;max-width:1440px;margin:0 auto;padding:110px clamp(20px,4vw,56px) 130px;height:100%}
 .hero-text{position:relative;z-index:6}
 .hero h1{font-size:clamp(52px,6.2vw,104px);color:var(--green);margin-top:22px}
@@ -99,24 +98,11 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--green-bright);outli
 .info-card .s{font-size:14px;color:var(--ink-soft);margin-top:2px}
 .info-card a{display:inline-flex;align-items:center;min-height:44px;font-size:14px;font-weight:700}
 
-.stage{position:relative;height:calc(var(--rh) + 4vh);z-index:3}
-.fly{position:absolute;inset:0;transform-origin:50% 58%;will-change:transform}
-.layer{position:absolute;inset:0;pointer-events:none}
-.balls{position:absolute;inset:0;transform-origin:50% 50%}
-.rwrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;perspective:1400px;z-index:3;pointer-events:none}
-.rstack{position:relative;height:var(--rh);width:calc(var(--rh)*460/935);filter:drop-shadow(0 30px 34px rgba(15,77,42,.28));animation:racketIn 1.3s var(--ease) .15s both,floaty 7s ease-in-out 1.45s infinite}
-@keyframes racketIn{from{opacity:0;transform:translateY(70px) rotate(6deg) scale(.92)}to{opacity:1;transform:translateY(0) rotate(16deg) scale(1)}}
-@keyframes floaty{0%,100%{transform:translateY(0) rotate(16deg)}50%{transform:translateY(-18px) rotate(14deg)}}
-.tilt{transform-style:preserve-3d;will-change:transform}
-.shadow{position:absolute;left:50%;bottom:3vh;width:calc(60%*var(--sw,1));max-width:calc(340px*var(--sw,1));height:5vh;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(15,50,30,.42),transparent);filter:blur(8px);animation:shadowPulse 7s ease-in-out 1.45s infinite}
-@keyframes shadowPulse{0%,100%{transform:translateX(-50%) scale(1);opacity:.9}50%{transform:translateX(-50%) scale(.86);opacity:.65}}
 .b{position:absolute;width:calc(var(--rh)*.098*var(--s));will-change:transform}
 .bp{position:relative;opacity:0;transform:scale(.2);filter:drop-shadow(0 10px 14px rgba(15,50,30,.28));animation:pop .8s cubic-bezier(.3,1.6,.5,1) forwards;animation-delay:calc(.55s + var(--i)*.09s)}
-.balls-bg .bp{filter:blur(1.6px) drop-shadow(0 8px 10px rgba(15,50,30,.2))}
 .bp img{display:block;width:100%;height:auto}
 .bp .s{position:absolute;left:0;top:0;opacity:var(--sand,0)}
 @keyframes pop{to{opacity:1;transform:scale(1)}}
-.hdust{position:absolute;left:0;top:0;height:auto;opacity:0;pointer-events:none;z-index:6;transform:translate(-50%,-50%)}
 
 /* ---------- Verein ---------- */
 .two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(36px,5vw,72px);align-items:center}
@@ -154,10 +140,6 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--green-bright);outli
 .gastro-photo{aspect-ratio:4/3.2}
 .cta-grid{max-width:1220px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(24px,4vw,56px);align-items:center}
 .cta-stage{position:relative;--rh:clamp(300px,31vw,420px);height:clamp(320px,36vw,480px)}
-.rframes{position:absolute;left:50%;top:50%;height:121%;aspect-ratio:380/790;transform:translate(-50%,-50%)}
-.rf{position:absolute;left:0;top:0;width:100%;height:100%;max-width:none;opacity:0;will-change:opacity}
-.rf:first-child{opacity:1}
-.cta-still{position:absolute;left:50%;top:50%;height:95%;width:auto;max-width:none;aspect-ratio:1/1;transform:translate(-50%,-50%);filter:drop-shadow(0 22px 22px rgba(15,77,42,.28));animation:ctaFloat 7s ease-in-out infinite;transition:opacity .12s linear;z-index:1}
 .cta-shadow{position:absolute;left:50%;bottom:4%;width:52%;height:7%;transform:translateX(-50%);background:radial-gradient(closest-side,rgba(15,50,30,.34),transparent);filter:blur(8px)}
 .cdust{position:absolute;left:0;top:0;height:auto;opacity:0;pointer-events:none;z-index:4;transform:translate(-50%,-50%)}
 .cta-stage .b{z-index:3}
@@ -173,7 +155,6 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--green-bright);outli
 .tile .cap{position:absolute;left:18px;right:18px;bottom:16px;z-index:2}
 .tile .cap b{display:block;font-size:17px;line-height:1.25}
 .tile .cap span{display:block;font-size:13px;opacity:.9;margin-top:2px}
-.t-big{grid-column:1/3;grid-row:1/3}.t-tall{grid-column:4;grid-row:1/3}.t-tall2{grid-column:1;grid-row:3/5}.t-wide1{grid-column:2/4;grid-row:3}.t-tall3{grid-column:4;grid-row:3/5}.t-sq{grid-column:2;grid-row:4}
 .tile.all{grid-column:3;grid-row:4;background:var(--green);display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 clamp(16px,2vw,28px);text-decoration:none}
 .tile.all::after{display:none}
 .tile.all .cap{position:static}
@@ -334,7 +315,6 @@ a.sp:hover{filter:none;opacity:1;transform:translateY(-4px)}
   .hero{height:auto}
   .hero-pin{height:auto;min-height:100svh}
   .hero-grid{grid-template-columns:1fr;height:auto;padding-top:120px}
-  .stage{height:calc(var(--rh) + 6vh)}
   .two,.team{grid-template-columns:1fr}
   .team.rev .photo{order:0}
   .stats-band{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -384,7 +364,6 @@ a.sp:hover{filter:none;opacity:1;transform:translateY(-4px)}
 /* Handy und Tablet: der Schläger ist ein scharfes Bild aus dem 3D-Modell (kein WebGL, spart Akku und Ruckeln) */
 @media (max-width:980px){
 }
-@media (max-width:980px){.rframes{height:105%}}
 @keyframes ctaFloat{0%,100%{transform:translate(-50%,-50%)}50%{transform:translate(-50%,-53%)}}
 /* Handy und Tablet: weniger Glasflächen, sonst ruckelt das Scrollen */
 @media (max-width:980px),(pointer:coarse){
@@ -398,4 +377,42 @@ a.sp:hover{filter:none;opacity:1;transform:translateY(-4px)}
   *,*::before,*::after{animation:none!important;transition:none!important}
   .w,.fade,.bp{opacity:1!important;transform:none!important}
   .js .rv{opacity:1;transform:none}
+}
+
+/* ---------- Hero: Luftbild der Anlage ---------- */
+.hero-photo{margin:0;position:relative;z-index:3;aspect-ratio:5/4;border-radius:34px;overflow:hidden;background:#dfe6d6;border:1px solid rgba(255,255,255,.75);box-shadow:0 40px 90px rgba(15,77,42,.26),0 8px 24px rgba(15,77,42,.14)}
+.hero-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 58%;max-width:none}
+@media (max-width:980px){.hero-photo{border-radius:26px;margin-top:6px}}
+
+/* ---------- Spiel bei uns: Schläger schlägt auf Klick eine Vorhand ---------- */
+.cta-visual{position:relative}
+.swing{position:absolute;left:50%;top:50%;height:100%;aspect-ratio:1/1;transform:translate(-50%,-50%);animation:ctaFloat 7s ease-in-out infinite;cursor:pointer;z-index:2;-webkit-tap-highlight-color:transparent}
+.swing-idle,.swing-canvas{position:absolute;left:0;top:0;width:100%;height:100%;max-width:none;filter:drop-shadow(0 18px 18px rgba(15,77,42,.28))}
+.swing-ball{position:absolute;left:81%;top:47%;width:9.5%;height:auto;max-width:none;transform:translate(-50%,-50%);filter:drop-shadow(0 8px 10px rgba(15,50,30,.3));z-index:3}
+.swing-ring{position:absolute;left:81%;top:47%;width:14%;aspect-ratio:1/1;border-radius:50%;border:3px solid rgba(15,77,42,.45);transform:translate(-50%,-50%) scale(0);opacity:0;pointer-events:none;z-index:3}
+@media (min-width:981px){.swing{height:125%}}
+.swing-btn{position:absolute;left:50%;bottom:-4px;transform:translateX(-50%);z-index:4;min-height:44px;white-space:nowrap;padding-inline:26px;background:rgba(255,255,255,.85)}
+
+/* ---------- Galerie-Kacheln auf der Startseite: 4 Spalten x 5 Reihen, lückenlos und symmetrisch ---------- */
+.collage>.tile:nth-child(1){grid-column:1/3;grid-row:1/3}
+.collage>.tile:nth-child(3){grid-column:3;grid-row:1}
+.collage>.tile:nth-child(4){grid-column:4;grid-row:1/3}
+.collage>.tile:nth-child(5){grid-column:3;grid-row:2}
+.collage>.tile:nth-child(6){grid-column:1;grid-row:3/5}
+.collage>.tile:nth-child(7){grid-column:2/4;grid-row:3}
+.collage>.tile:nth-child(8){grid-column:4;grid-row:3/5}
+.collage>.tile:nth-child(9){grid-column:2;grid-row:4}
+.collage>.tile:nth-child(2){grid-column:3;grid-row:4}
+.collage>.tile.all{grid-column:1/5;grid-row:5;min-height:0}
+@media (max-width:700px){
+  .collage>.tile:nth-child(1){grid-column:1/3;grid-row:1}
+  .collage>.tile:nth-child(4){grid-column:1;grid-row:2/4}
+  .collage>.tile:nth-child(7){grid-column:2;grid-row:2}
+  .collage>.tile:nth-child(3){grid-column:2;grid-row:3}
+  .collage>.tile:nth-child(5){grid-column:1;grid-row:4}
+  .collage>.tile:nth-child(6){grid-column:2;grid-row:4/6}
+  .collage>.tile:nth-child(9){grid-column:1;grid-row:5}
+  .collage>.tile:nth-child(2){grid-column:1/3;grid-row:6}
+  .collage>.tile:nth-child(8){grid-column:1/3;grid-row:7}
+  .collage>.tile.all{grid-column:1/3;grid-row:8;min-height:120px}
 }
