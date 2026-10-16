@@ -239,8 +239,9 @@
   })();
 
   /* ---------- "Spiel bei uns": Klick auf den Schläger schlägt eine Vorhand ---------- */
-  /* 22 vorgerenderte Bilder (nur der Schläger, kein Mensch) laufen als Schlagbewegung ab. Beim Treffpunkt (Bild 12)
-     fliegt der Ball weg, danach fällt ein neuer Ball ein. Die Bilder laden erst kurz vor dem Sichtbarwerden. */
+  /* 24 vorgerenderte Bilder (nur der Schläger, kein Mensch): Ausgangsstellung mit dem Griff unten links, Ausholen nach hinten,
+     Schlag nach vorn auf die Kamera zu (Treffpunkt: Bild 13), Auslaufen und zurück in die Ausgangsstellung.
+     Beim Treffer fliegt der Ball auf den Betrachter zu, danach erscheint ein neuer. Die Bilder laden erst kurz vor dem Sichtbarwerden. */
   (function swing() {
     var stage = doc.querySelector('.cta-stage');
     var btn = doc.querySelector('.swing-btn');
@@ -250,21 +251,30 @@
     var ball = stage.querySelector('.swing-ball');
     var ring = stage.querySelector('.swing-ring');
     if (!wrap || !cv || !ball || !cv.getContext) return;
-    if (reduce) { btn.hidden = true; return; }       /* ohne Bewegung bleibt das Ruhebild stehen */
-    var N = 22, CONTACT = 12, FRAME_MS = 30;
+    if (reduce) { btn.style.display = 'none'; return; }       /* ohne Bewegung bleibt das Ruhebild stehen */
+    var N = 24, CONTACT = 13, FRAME_MS = 38;
     var ctx = cv.getContext('2d');
-    var imgs = [], loaded = 0, ready = false, busy = false, wantPlay = false;
+    var imgs = [], settled = 0, ready = false, busy = false, wantPlay = false;
 
-    function draw(i) { ctx.clearRect(0, 0, cv.width, cv.height); ctx.drawImage(imgs[i], 0, 0, cv.width, cv.height); }
+    function draw(i) {
+      var im = imgs[i];
+      if (!im || !im.complete || !im.naturalWidth) return;
+      ctx.clearRect(0, 0, cv.width, cv.height);
+      ctx.drawImage(im, 0, 0, cv.width, cv.height);
+    }
+    function done() {
+      settled++;
+      if (settled < N) return;
+      ready = true; draw(0);
+      if (wantPlay) { wantPlay = false; play(); }
+    }
     function load() {
       if (imgs.length) return;
       for (var i = 0; i < N; i++) {
         var im = new Image();
         im.decoding = 'async';
-        im.onload = function () {
-          loaded++;
-          if (loaded === N) { ready = true; draw(0); if (wantPlay) { wantPlay = false; play(); } }
-        };
+        im.onload = done;
+        im.onerror = done;
         im.src = 'assets/hero/web/swing-' + (i < 10 ? '0' : '') + i + '.webp';
         imgs.push(im);
       }
@@ -275,27 +285,25 @@
     } else { load(); }
 
     function flyBall() {
+      /* Der Ball fliegt auf die Kamera zu: er wird schnell größer und verschwindet nach oben links aus dem Bild */
       ball.animate([
         { transform: 'translate(-50%,-50%) scale(1) rotate(0deg)', opacity: 1 },
-        { transform: 'translate(calc(-50% + 9vw),calc(-50% - 22%)) scale(.8) rotate(160deg)', opacity: 1, offset: 0.35 },
-        { transform: 'translate(calc(-50% + 22vw),calc(-50% - 12%)) scale(.3) rotate(420deg)', opacity: 0 }
-      ], { duration: 950, easing: 'cubic-bezier(.2,.7,.4,1)', fill: 'forwards' });
+        { transform: 'translate(-66%,-115%) scale(2.6) rotate(140deg)', opacity: 1, offset: 0.5 },
+        { transform: 'translate(-90%,-230%) scale(7) rotate(320deg)', opacity: 0 }
+      ], { duration: 780, easing: 'cubic-bezier(.5,0,.9,.6)', fill: 'forwards' });
       ring.animate([
         { transform: 'translate(-50%,-50%) scale(.2)', opacity: 0.7 },
-        { transform: 'translate(-50%,-50%) scale(1.8)', opacity: 0 }
+        { transform: 'translate(-50%,-50%) scale(2)', opacity: 0 }
       ], { duration: 520, easing: 'ease-out' });
     }
     function newBall() {
       ball.getAnimations().forEach(function (an) { an.cancel(); });
-      var done = ball.animate([
-        { transform: 'translate(-50%,calc(-50% - 230%)) scale(1)', opacity: 0 },
-        { transform: 'translate(-50%,-50%) scale(1)', opacity: 1, offset: 0.5 },
-        { transform: 'translate(-50%,calc(-50% - 70%)) scale(1)', opacity: 1, offset: 0.7 },
-        { transform: 'translate(-50%,-50%) scale(1)', opacity: 1, offset: 0.85 },
-        { transform: 'translate(-50%,calc(-50% - 14%)) scale(1)', opacity: 1, offset: 0.93 },
+      var fin = ball.animate([
+        { transform: 'translate(-50%,-50%) scale(.2)', opacity: 0 },
+        { transform: 'translate(-50%,-50%) scale(1.18)', opacity: 1, offset: 0.65 },
         { transform: 'translate(-50%,-50%) scale(1)', opacity: 1 }
-      ], { duration: 1100, easing: 'ease-in' });
-      done.onfinish = function () { busy = false; btn.removeAttribute('aria-busy'); };
+      ], { duration: 520, easing: 'ease-out' });
+      fin.onfinish = function () { busy = false; btn.removeAttribute('aria-busy'); };
     }
     function play() {
       if (busy) return;
@@ -309,7 +317,7 @@
         draw(f);
         if (!hit && f >= CONTACT) { hit = true; flyBall(); }
         if (f < N - 1) requestAnimationFrame(step);
-        else setTimeout(function () { draw(0); newBall(); }, 380);
+        else setTimeout(newBall, 250);
       })(performance.now());
     }
     wrap.addEventListener('click', play);

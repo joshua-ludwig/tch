@@ -44,5 +44,5 @@ sonst landen Mails leichter im Spam. Nach dem Upload einmal eine Testnachricht s
 ## Bilder im Hero und bei "Spiel bei uns"
 
 - **Hero:** Luftbild der Anlage (`assets/img/anlage-am-itzenplitzer-weiher-luftbild.webp`), ein einfaches Foto ohne 3D. Es steht auch als Album "Unsere Anlage" in der Galerie (20 Drohnenfotos, in `js/gallery-data.js`).
-- **Spiel bei uns:** Der Schläger besteht aus 22 vorgerenderten Bildern (`assets/hero/web/swing-00.webp` bis `swing-21.webp`, Schlagbewegung ohne Person). Ein Klick auf den Schläger oder auf "Vorhand schlagen" spielt sie ab (`js/main.js`, Funktion `swing`), der Ball fliegt weg, ein neuer fällt ein. Bei "weniger Bewegung" bleibt nur das Ruhebild.
+- **Spiel bei uns:** Der Schläger besteht aus 24 vorgerenderten Bildern (`assets/hero/web/swing-00.webp` bis `swing-23.webp`, Vorhand auf die Kamera zu, ohne Person). Ein Klick auf den Schläger oder auf "Vorhand schlagen" spielt sie ab (`js/main.js`, Funktion `swing`), der Ball fliegt weg, ein neuer fällt ein. Bei "weniger Bewegung" bleibt nur das Ruhebild.
 - Die Bilder sind aus dem Code-Modell `src/racket-model.js` (Three.js) gerendert (800 x 800 Pixel, danach 520 Pixel als WebP). Wenn sich das Modell ändert, müssen sie neu gerendert werden. Auf der Seite läuft kein WebGL.
