@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://tc-heiligenwald.de/</loc><lastmod>2026-10-14</lastmod><priority>1.0</priority></url>
-  <url><loc>https://tc-heiligenwald.de/jugend.html</loc><lastmod>2026-10-14</lastmod><priority>0.8</priority></url>
-  <url><loc>https://tc-heiligenwald.de/damen.html</loc><lastmod>2026-10-14</lastmod><priority>0.7</priority></url>
-  <url><loc>https://tc-heiligenwald.de/herren.html</loc><lastmod>2026-10-14</lastmod><priority>0.7</priority></url>
-  <url><loc>https://tc-heiligenwald.de/mixed.html</loc><lastmod>2026-10-14</lastmod><priority>0.7</priority></url>
-  <url><loc>https://tc-heiligenwald.de/aktuelles.html</loc><lastmod>2026-10-14</lastmod><priority>0.7</priority></url>
+  <url><loc>https://tc-heiligenwald.de/</loc><lastmod>2026-10-17</lastmod><priority>1.0</priority></url>
+  <url><loc>https://tc-heiligenwald.de/jugend.html</loc><lastmod>2026-10-17</lastmod><priority>0.8</priority></url>
+  <url><loc>https://tc-heiligenwald.de/damen.html</loc><lastmod>2026-10-17</lastmod><priority>0.7</priority></url>
+  <url><loc>https://tc-heiligenwald.de/herren.html</loc><lastmod>2026-10-17</lastmod><priority>0.7</priority></url>
+  <url><loc>https://tc-heiligenwald.de/mixed.html</loc><lastmod>2026-10-17</lastmod><priority>0.7</priority></url>
+  <url><loc>https://tc-heiligenwald.de/aktuelles.html</loc><lastmod>2026-10-17</lastmod><priority>0.7</priority></url>
   <url><loc>https://tc-heiligenwald.de/meldung-u15-landesliga-meister.html</loc><lastmod>2026-06-11</lastmod><priority>0.5</priority></url>
   <url><loc>https://tc-heiligenwald.de/meldung-u18-oberkirchen.html</loc><lastmod>2026-09-01</lastmod><priority>0.5</priority></url>
-  <url><loc>https://tc-heiligenwald.de/galerie.html</loc><lastmod>2026-10-14</lastmod><priority>0.6</priority></url>
-  <url><loc>https://tc-heiligenwald.de/impressum.html</loc><lastmod>2026-10-14</lastmod><priority>0.2</priority></url>
-  <url><loc>https://tc-heiligenwald.de/datenschutz.html</loc><lastmod>2026-10-14</lastmod><priority>0.2</priority></url>
-  <url><loc>https://tc-heiligenwald.de/anliegen.html</loc><lastmod>2026-10-14</lastmod><priority>0.6</priority></url>
+  <url><loc>https://tc-heiligenwald.de/galerie.html</loc><lastmod>2026-10-17</lastmod><priority>0.6</priority></url>
+  <url><loc>https://tc-heiligenwald.de/impressum.html</loc><lastmod>2026-10-17</lastmod><priority>0.2</priority></url>
+  <url><loc>https://tc-heiligenwald.de/datenschutz.html</loc><lastmod>2026-10-17</lastmod><priority>0.2</priority></url>
+  <url><loc>https://tc-heiligenwald.de/anliegen.html</loc><lastmod>2026-10-17</lastmod><priority>0.6</priority></url>
 </urlset>

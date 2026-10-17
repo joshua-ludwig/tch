@@ -1,6 +1,6 @@
 # TC Grün-Weiss Heiligenwald e.V.
 
-> Tennisverein in Heiligenwald (Saarland) mit sechs roten Sandplätzen im Naherholungsgebiet Itzenplitz, direkt am Itzenplitzer Weiher. Mannschaften für Kinder, Jugendliche, Damen, Herren und Mixed, dazu eine Vereinsgaststätte mit Biergarten.
+> Tennisverein in Heiligenwald (Gemeinde Schiffweiler, Landkreis Neunkirchen, Saarland) mit sechs roten Sandplätzen im Naherholungsgebiet Itzenplitz, direkt am Itzenplitzer Weiher. Mannschaften für Kinder, Jugendliche, Damen, Herren und Mixed, dazu eine Vereinsgaststätte mit Biergarten.
 
 ## Auf einen Blick
 - Anschrift der Anlage: Tennis-Club Grün-Weiss, Am Itzenplitzer Weiher, 66578 Heiligenwald
@@ -18,8 +18,18 @@
 - [Herren](https://tc-heiligenwald.de/herren.html): Herren 30, 40, 50, 55, 60 und 65
 - [Mixed](https://tc-heiligenwald.de/mixed.html): Saarlandmeister 2020 bis 2023
 - [Aktuelles](https://tc-heiligenwald.de/aktuelles.html): Meldungen aus dem Vereinsleben
-- [Galerie](https://tc-heiligenwald.de/galerie.html): 15 Fotoalben mit Feiern, Tenniscamps und Turnieren
+- [Galerie](https://tc-heiligenwald.de/galerie.html): 16 Fotoalben mit Luftbildern der Anlage, Feiern, Tenniscamps und Turnieren
 - [Impressum](https://tc-heiligenwald.de/impressum.html) und [Datenschutz](https://tc-heiligenwald.de/datenschutz.html)
+
+## Häufige Fragen
+- Wie viele Plätze hat der Verein? Sechs Außenplätze mit rotem Sand am Itzenplitzer Weiher.
+- Wann ist geöffnet? Täglich 10 bis 22 Uhr, dienstags Ruhetag.
+- Wie werde ich Mitglied? Aufnahmeantrag als PDF herunterladen, ausfüllen und an den Vorstand schicken, oder anrufen unter 06821 68787.
+- Gibt es Jugendtraining? Ja, für Kinder und Jugendliche von 5 bis 15 Jahren, geleitet von der Tennisschule Network.
+- Gibt es Gastronomie? Ja, die Vereinsgaststätte mit Biergarten ist täglich ab 10 Uhr geöffnet.
+
+## Anfahrt
+Karte und Routenplanung: https://www.google.com/maps/search/?api=1&query=Tennis-Club+Gr%C3%BCn-Weiss+Am+Itzenplitzer+Weiher+66578+Heiligenwald
 
 ## Mitglied werden
 Aufnahmeantrag als PDF: https://tc-heiligenwald.de/downloads/AufnahmeAntragTCHeiligenwald.pdf
