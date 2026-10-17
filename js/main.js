@@ -92,16 +92,23 @@
       var label = btn.textContent;
       btn.disabled = true;
       btn.textContent = 'Wird gesendet …';
+      /* Ausweg ohne Server: Wo kein PHP läuft (oder der Versand scheitert), öffnet sich das Mailprogramm mit der fertigen Nachricht. */
+      function viaMail() {
+        if (form.elements.website && form.elements.website.value) return;           /* Bots nicht weiterleiten */
+        var f = form.elements;
+        var body = 'Name: ' + f.name.value + '\nE-Mail: ' + f.email.value + (f.phone.value ? '\nTelefon: ' + f.phone.value : '') + '\n\n' + f.message.value;
+        window.location.href = 'mailto:tc-heiligenwald@t-online.de?subject=' + encodeURIComponent('Anliegen über die Website') + '&body=' + encodeURIComponent(body);
+        status.className = 'cstatus';
+        status.textContent = 'Dein Mailprogramm öffnet sich mit der fertigen Nachricht. Bitte dort noch auf Senden klicken. Sonst schreib direkt an tc-heiligenwald@t-online.de.';
+      }
       fetch(form.action, { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' } })
-        .then(function (r) { return r.json().catch(function () { return { ok: false, message: 'Das Formular ist gerade nicht erreichbar. Bitte schreib uns direkt an tc-heiligenwald@t-online.de.' }; }); })
+        .then(function (r) { return r.json().catch(function () { return null; }); })
         .then(function (d) {
+          if (!d) { viaMail(); return; }
           status.textContent = d.message;
           if (d.ok) { form.reset(); stamp.value = String(Date.now()); } else { status.className = 'cstatus err'; }
         })
-        .catch(function () {
-          status.className = 'cstatus err';
-          status.textContent = 'Keine Verbindung. Bitte versuche es später noch einmal oder schreib an tc-heiligenwald@t-online.de.';
-        })
+        .catch(viaMail)
         .then(function () { btn.disabled = false; btn.textContent = label; });
     });
   })();

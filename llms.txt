@@ -29,6 +29,7 @@
 - Gibt es Gastronomie? Ja, die Vereinsgaststätte mit Biergarten ist täglich ab 10 Uhr geöffnet.
 
 ## Anfahrt
+Koordinaten: 49.3503837, 7.0964232. Google-Profil: https://www.google.com/maps?cid=10152487179526316423
 Karte und Routenplanung: https://www.google.com/maps/search/?api=1&query=Tennis-Club+Gr%C3%BCn-Weiss+Am+Itzenplitzer+Weiher+66578+Heiligenwald
 
 ## Mitglied werden
